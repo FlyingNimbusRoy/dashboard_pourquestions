@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class QuestionController extends Controller
 {
@@ -55,30 +56,41 @@ class QuestionController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'vraag' => 'required|string|max:255',
-            'trivia' => 'nullable|string|max:255',
-            'difficulty' => 'required|integer|min:1|max:5',
-            'is_random' => 'required|boolean',
-            'is_nsfw' => 'required|boolean',
-            'category_id' => 'nullable|exists:categories,id',
-            'gamepack_id' => 'nullable|exists:gamepacks,id',
-            'answers.*.answer' => 'required|string|max:255',
-            'answers.*.is_correct' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'vraag' => 'required|string|max:255',
+                'trivia' => 'nullable|string|max:255',
+                'difficulty' => 'required|integer|min:1|max:5',
+                'is_random' => 'required|boolean',
+                'is_nsfw' => 'required|boolean',
+                'category_id' => 'nullable|exists:categories,id',
+                'gamepack_id' => 'nullable|exists:gamepacks,id',
+                'answers.*.answer' => 'required|string|max:255',
+                'answers.*.is_correct' => 'boolean',
+            ]);
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput()
+                ->with('error', 'Please fix the errors below and try again.');
+        }
 
         $validated['maker_id'] = auth()->id(); // auto-assign maker
 
         $question = Question::create($validated);
 
-        if ($request->has('answers')) {
+        if ($request->filled('answers')) {
             foreach ($request->answers as $answerData) {
-                $question->answers()->create($answerData);
+                $question->answers()->create([
+                    'answer' => $answerData['answer'],
+                    'is_correct' => $answerData['is_correct'] ?? 0,
+                ]);
             }
         }
 
-        //return redirect()->route('questions.index')->with('success', 'Question created!');
+        return redirect()->route('questions.index')->with('success', 'Question created!');
     }
+
 
     public function edit(Question $question)
     {

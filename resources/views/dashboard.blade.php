@@ -28,6 +28,16 @@
                     Questions
                 </a>
 
+                <a href="{{ route('dashboard.categories.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M4 6h16M4 20h16"/>
+                    </svg>
+                    Categories
+                </a>
+
             </nav>
 
             <div class="px-6 py-4 border-t dashboard__label">
