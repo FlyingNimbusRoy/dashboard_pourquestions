@@ -33,6 +33,12 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        // Custom upload routes first
+        Route::get('characters/upload', [CharacterController::class, 'uploadForm'])->name('characters.upload');
+        Route::post('characters/upload', [CharacterController::class, 'uploadStore'])->name('characters.upload.store');
+        Route::delete('characters/upload/{filename}', [CharacterController::class, 'uploadDestroy'])->name('characters.upload.destroy');
+
+        // Then the resource
         Route::resource('categories', CategoryController::class);
         Route::resource('gamepacks', GamepackController::class);
         Route::resource('characters', CharacterController::class);
