@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\QuestionController;
 use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\GamepackController;
+use App\Http\Controllers\Dashboard\CharacterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,8 +34,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::resource('categories', CategoryController::class);
+        Route::resource('gamepacks', GamepackController::class);
+        Route::resource('characters', CharacterController::class);
     });
-
 });
 
 require __DIR__.'/auth.php';

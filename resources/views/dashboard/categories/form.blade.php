@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <form action="{{ isset($category) ? route('categories.update', $category) : route('categories.store') }}" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 space-y-6">
+    <form action="{{ isset($category) ? route('dashboard.categories.update', $category) : route('dashboard.categories.store') }}" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 space-y-6">
         @csrf
         @if(isset($category))
             @method('PUT')
@@ -58,7 +58,7 @@
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Save
             </button>
-            <a href="{{ route('categories.index') }}" class="text-blue-500 hover:underline">Cancel</a>
+            <a href="{{ route('dashboard.categories.index') }}" class="text-blue-500 hover:underline">Cancel</a>
         </div>
     </form>
 

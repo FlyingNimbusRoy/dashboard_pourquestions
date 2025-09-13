@@ -30,7 +30,7 @@ class CategoryController extends Controller
 
         Category::create($validated);
 
-        return redirect()->route('categories.index')->with('success', 'Category created!');
+        return redirect()->route('dashboard.categories.index')->with('success', 'Category created!');
     }
 
     public function edit(Category $category)
@@ -49,7 +49,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('categories.index')->with('success', 'Category updated!');
+        return redirect()->route('dashboard.categories.index')->with('success', 'Category updated!');
     }
 
     public function destroy(Category $category)
