@@ -38,7 +38,7 @@ class QuestionController extends Controller
             $query->where('difficulty', $request->difficulty);
         }
 
-        $questions = $query->latest()->paginate(20);
+        $questions = $query->latest()->paginate(40);
 
         // Preserve query parameters in pagination links
         $questions->appends($request->only('search', 'is_nsfw', 'is_random', 'category_id', 'gamepack_id', 'difficulty'));
@@ -57,12 +57,27 @@ class QuestionController extends Controller
     {
         $validated = $request->validate([
             'vraag' => 'required|string|max:255',
-            'difficulty' => 'required|integer',
+            'trivia' => 'nullable|string|max:255',
+            'difficulty' => 'required|integer|min:1|max:5',
+            'is_random' => 'required|boolean',
+            'is_nsfw' => 'required|boolean',
+            'category_id' => 'nullable|exists:categories,id',
+            'gamepack_id' => 'nullable|exists:gamepacks,id',
+            'answers.*.answer' => 'required|string|max:255',
+            'answers.*.is_correct' => 'boolean',
         ]);
 
-        Question::create($validated);
+        $validated['maker_id'] = auth()->id(); // auto-assign maker
 
-        return redirect()->route('questions.index');
+        $question = Question::create($validated);
+
+        if ($request->has('answers')) {
+            foreach ($request->answers as $answerData) {
+                $question->answers()->create($answerData);
+            }
+        }
+
+        //return redirect()->route('questions.index')->with('success', 'Question created!');
     }
 
     public function edit(Question $question)
@@ -74,18 +89,40 @@ class QuestionController extends Controller
     {
         $validated = $request->validate([
             'vraag' => 'required|string|max:255',
-            'difficulty' => 'required|integer',
+            'trivia' => 'nullable|string|max:255',
+            'difficulty' => 'required|integer|min:1|max:5',
+            'is_random' => 'boolean',
+            'is_nsfw' => 'boolean',
+            'category_id' => 'nullable|exists:categories,id',
+            'gamepack_id' => 'nullable|exists:gamepacks,id',
+            'answers.*.answer' => 'required|string|max:255',
+            'answers.*.is_correct' => 'boolean',
         ]);
 
         $question->update($validated);
 
-        return redirect()->route('questions.index');
+        // Replace old answers
+        $question->answers()->delete();
+        if ($request->filled('answers')) {
+            foreach ($request->answers as $answerData) {
+                $question->answers()->create([
+                    'answer' => $answerData['answer'],
+                    'is_correct' => $answerData['is_correct'] ?? 0,
+                ]);
+            }
+        }
+
+        return redirect()->route('questions.index')->with('success', 'Question updated!');
     }
 
     public function destroy(Question $question)
     {
+        // delete answers first
+        $question->answers()->delete();
+
+        // then delete question
         $question->delete();
 
-        return redirect()->route('questions.index');
+        return redirect()->route('questions.index')->with('success', 'Question deleted!');
     }
 }

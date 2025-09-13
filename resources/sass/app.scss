@@ -1,0 +1,46 @@
+// Import partials
+@import 'variables';
+@import 'buttons';
+@import 'tables';
+@import 'components/answers';
+
+.main {
+    &__wrapper, &__content--wrapper {
+        background-color: $base-color;
+        overflow-x: hidden;
+    }
+}
+
+.navigation {
+    &__wrapper {
+        background-color: $card-color;
+        color: $text-color !important;
+    }
+
+    &--sidebar {
+        background-color: $card-color;
+        color: $text-color !important;
+    }
+}
+
+.dashboard {
+    &__label {
+        background-color: $card-color;
+        color: $text-color !important;
+        border: unset;
+    }
+
+    &__cta {
+        background-color: $detail-color;
+    }
+}
+
+.logo {
+    &__dashboard {
+        &--main {
+            max-height: 100%;
+            width: auto;
+            height: 80px;
+        }
+    }
+}
