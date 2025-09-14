@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\QuestionController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\GamepackController;
 use App\Http\Controllers\Dashboard\CharacterController;
+use App\Http\Controllers\Dashboard\ToolsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,9 +16,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -43,6 +46,13 @@ Route::middleware('auth')->group(function () {
         Route::get('characters/upload', [CharacterController::class, 'uploadForm'])->name('characters.upload');
         Route::post('characters/upload', [CharacterController::class, 'uploadStore'])->name('characters.upload.store');
         Route::delete('characters/upload/{filename}', [CharacterController::class, 'uploadDestroy'])->name('characters.upload.destroy');
+
+        // Tools
+        Route::get('tools', [ToolsController::class, 'index'])->name('tools.index');
+        Route::get('tools/grading', [ToolsController::class, 'grading'])->name('tools.grading');
+        Route::post('tools/grading/{question}', [ToolsController::class, 'updateGrading'])->name('tools.grading.update');
+        Route::get('tools/relevancy', [ToolsController::class, 'relevancyChecker'])->name('tools.relevancy');
+        Route::post('tools/relevancy/validate', [ToolsController::class, 'validateQuestion'])->name('tools.relevancy.validate');
 
         // Then the resource
         Route::resource('categories', CategoryController::class);

@@ -72,8 +72,19 @@
                             Upload
                         </a>
                     </div>
-
                 </div>
+
+                <a href="{{ route('dashboard.tools.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500"
+                         xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 21l1.5-1.5m15-15L21 3m-3 3l-3 3m-6 6l-3 3m3-3a9 9 0 0112.728-12.728A9 9 0 016 18z"/>
+                    </svg>
+
+                    Tools
+                </a>
 
             </nav>
 
