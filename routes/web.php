@@ -30,7 +30,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/{question}/edit', [QuestionController::class, 'edit'])->name('edit');
         Route::put('/{question}', [QuestionController::class, 'update'])->name('update');
         Route::delete('/{question}', [QuestionController::class, 'destroy'])->name('destroy');
+
+        // FIXED: remove extra 'questions/' prefix in URL
+        Route::get('/import', [QuestionController::class, 'importView'])->name('import.view');
+        Route::post('/import', [QuestionController::class, 'importExcel'])->name('import');
+        Route::get('/template', [QuestionController::class, 'downloadTemplate'])->name('template');
     });
+
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         // Custom upload routes first

@@ -2,8 +2,12 @@
 @import 'variables';
 @import 'buttons';
 @import 'tables';
+@import 'login';
+
+// components
 @import 'components/answers';
 
+// main styling
 .main {
     &__wrapper, &__content--wrapper {
         background-color: $base-color;

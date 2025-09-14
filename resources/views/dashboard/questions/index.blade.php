@@ -10,6 +10,9 @@
                class="w-full px-5 py-3 dashboard__cta text-white rounded-lg shadow hover:bg-blue-700 transition text-center">
                 Create New Question
             </a>
+            <a class="w-full px-5 py-3 dashboard__cta text-white rounded-lg shadow hover:bg-blue-700 transition text-center" href="{{ route('questions.import.view') }}">
+                    Import Questions
+            </a>
         </div>
 
         <!-- Create + Filters -->
@@ -108,11 +111,11 @@
                         <td class="px-6 py-3 whitespace-wrap">{{ $question->vraag }}</td>
                         <td class="px-6 py-3 whitespace-nowrap">{{ $question->difficulty }}</td>
                         <td class="px-6 py-3 whitespace-nowrap space-x-3">
-                            <a href="{{ route('questions.edit', $question) }}" class="text-blue-600 hover:underline">Edit</a>
+                            <a href="{{ route('questions.edit', $question) }}" class="bg-yellow-400 px-2 py-1 rounded text-blue-600 hover:bg-yellow-500">Edit</a>
                             <form action="{{ route('questions.destroy', $question) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('Are you sure?')">Delete</button>
+                                <button type="submit" class="bg-red-500 px-2 py-1 rounded hover:bg-red-700 text-red-600" onclick="return confirm('Are you sure?')">Delete</button>
                             </form>
                         </td>
                     </tr>
