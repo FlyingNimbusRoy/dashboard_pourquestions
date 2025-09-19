@@ -21,6 +21,8 @@ class GamepackController extends Controller
 
     public function store(Request $request)
     {
+//        dd($request->all());
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
@@ -30,6 +32,8 @@ class GamepackController extends Controller
             'url_coverart' => 'nullable|url|max:255',
         ]);
 
+
+
         Gamepack::create($validated);
 
         return redirect()->route('dashboard.gamepacks.index')->with('success', 'Gamepack created!');
@@ -37,7 +41,7 @@ class GamepackController extends Controller
 
     public function edit(Gamepack $gamepack)
     {
-        return view('dashboard.gamepacks.edit', compact('gamepack'));
+        return view('dashboard.gamepacks.form', compact('gamepack'));
     }
 
     public function update(Request $request, Gamepack $gamepack)
