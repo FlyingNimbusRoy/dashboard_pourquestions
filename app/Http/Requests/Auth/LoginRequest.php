@@ -49,6 +49,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if (! $user->is_admin) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'You do not have permission to log in.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
