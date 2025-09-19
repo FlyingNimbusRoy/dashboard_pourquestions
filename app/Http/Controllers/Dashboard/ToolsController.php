@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Question;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,8 @@ class ToolsController extends Controller
     {
         return view('dashboard.tools.index');
     }
+
+    /* functions for grading-check */
 
     public function grading()
     {
@@ -41,6 +44,7 @@ class ToolsController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /* functions for relevancy-check */
 
     public function relevancyChecker()
     {
@@ -66,4 +70,42 @@ class ToolsController extends Controller
 
         return response()->json(['success' => true, 'last_validated' => $question->last_validated->toDateTimeString()]);
     }
+
+    /* functions for category-balance-check */
+
+    public function categoryBalance()
+    {
+        $categories = Category::withCount('questions')->get();
+        return view('dashboard.tools.category_balance', compact('categories'));
+    }
+
+    public function recategorisation(Request $request)
+    {
+        $categories = Category::all();
+        $questions = collect();
+
+        if ($request->filled('category')) {
+            $questions = Question::where('category_id', $request->category)->get();
+        }
+
+        return view('dashboard.tools.recategorisation', compact('categories', 'questions'));
+    }
+
+    public function recategorisationUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+        ]);
+
+        $question = Question::findOrFail($id);
+        $question->update(['category_id' => $request->category_id]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', 'Question moved!');
+    }
+
+
 }
