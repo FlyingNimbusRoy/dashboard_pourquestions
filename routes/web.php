@@ -53,6 +53,9 @@ Route::middleware('auth')->group(function () {
         Route::post('tools/grading/{question}', [ToolsController::class, 'updateGrading'])->name('tools.grading.update');
         Route::get('tools/relevancy', [ToolsController::class, 'relevancyChecker'])->name('tools.relevancy');
         Route::post('tools/relevancy/validate', [ToolsController::class, 'validateQuestion'])->name('tools.relevancy.validate');
+        Route::get('tools/category-balance', [ToolsController::class, 'categoryBalance'])->name('tools.category_balance');
+        Route::get('/tools/recategorisation', [ToolsController::class, 'recategorisation'])->name('tools.recategorisation');
+        Route::patch('/tools/recategorisation/{id}', [ToolsController::class, 'recategorisationUpdate'])->name('tools.recategorisation.update');
 
         // Then the resource
         Route::resource('categories', CategoryController::class);

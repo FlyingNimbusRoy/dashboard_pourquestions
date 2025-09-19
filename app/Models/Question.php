@@ -25,4 +25,19 @@ class Question extends Model
     {
         return $this->hasMany(Answer::class);
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function gamepack()
+    {
+        return $this->belongsTo(Gamepack::class);
+    }
+
+    public function maker()
+    {
+        return $this->belongsTo(User::class, 'maker_id');
+    }
 }
