@@ -7,7 +7,10 @@ use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\GamepackController;
 use App\Http\Controllers\Dashboard\CharacterController;
 use App\Http\Controllers\Dashboard\ToolsController;
+use App\Http\Controllers\Dashboard\CommentController;
+use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -57,10 +60,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/tools/recategorisation', [ToolsController::class, 'recategorisation'])->name('tools.recategorisation');
         Route::patch('/tools/recategorisation/{id}', [ToolsController::class, 'recategorisationUpdate'])->name('tools.recategorisation.update');
 
+        //Users
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::patch('users/{user}/toggle-admin', [UserController::class, 'toggleAdmin'])->name('users.toggle-admin');
+
+        Route::get('tools/similarities', [ToolsController::class, 'similarities'])->name('tools.similarities');
+        Route::post('tools/similarities/{id}/handle', [ToolsController::class, 'markSimilarityHandled'])->name('tools.similarities.handle');
+
         // Then the resource
         Route::resource('categories', CategoryController::class);
         Route::resource('gamepacks', GamepackController::class);
         Route::resource('characters', CharacterController::class);
+        Route::resource('comments', CommentController::class);
     });
 });
 

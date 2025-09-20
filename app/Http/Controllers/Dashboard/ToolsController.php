@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Category;
+use App\Models\QuestionSimilarity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -105,6 +106,27 @@ class ToolsController extends Controller
         }
 
         return back()->with('success', 'Question moved!');
+    }
+
+    /* functions for similarities-check */
+    public function similarities()
+    {
+        $similarities = QuestionSimilarity::with(['question', 'similarQuestion'])
+            ->where('handled', false)
+            ->orderByDesc('similarity_score')
+            ->paginate(50);
+
+        return view('dashboard.tools.similarities', compact('similarities'));
+    }
+
+    public function markSimilarityHandled($id)
+    {
+        $similarity = QuestionSimilarity::findOrFail($id);
+        $similarity->handled = true;
+        $similarity->save();
+
+        return redirect()->route('dashboard.tools.similarities')
+            ->with('success', 'Similarity marked as handled!');
     }
 
 

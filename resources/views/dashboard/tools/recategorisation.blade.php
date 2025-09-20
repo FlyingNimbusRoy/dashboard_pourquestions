@@ -53,11 +53,12 @@
                             @method('PATCH')
                             <select name="category_id" class="border rounded px-2 py-1">
                                 @foreach($categories as $cat)
-                                    @if($cat->id !== $q->category_id)
-                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                    @endif
+                                    <option value="{{ $cat->id }}" {{ $cat->id == $q->category_id ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
                                 @endforeach
                             </select>
+
                             <button type="submit"
                                     class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm">
                                 Move
@@ -73,7 +74,6 @@
     @endif
 
     <script>
-        // Intercept reassign form submit to remove row instantly
         document.querySelectorAll('.reassign-form').forEach(form => {
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
