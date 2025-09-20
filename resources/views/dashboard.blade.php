@@ -28,6 +28,17 @@
                     Questions
                 </a>
 
+                <a href="{{ route('dashboard.comments.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.47 0-2.857-.316-4.02-.87L3 20l1.33-3.33C3.48 15.57 3 13.84 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    Comments
+                </a>
+
+
                 <a href="{{ route('dashboard.categories.index') }}"
                    class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
@@ -73,6 +84,16 @@
                         </a>
                     </div>
                 </div>
+
+                <a href="{{ route('dashboard.users.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17 20h5V10H2v10h5m10-6a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    Users
+                </a>
 
                 <a href="{{ route('dashboard.tools.index') }}"
                    class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">

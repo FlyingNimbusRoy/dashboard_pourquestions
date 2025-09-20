@@ -16,14 +16,24 @@
                 @if($validationTotal ?? 0 > 0)
                     <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded">
                         ⚡ You have <strong>{{ $validationTotal }}</strong> questions to validate.
-                        <a href="{{ route('dashboard.tools.relevancy') }}" class="underline ml-2">Open Relevancy Tool</a>
+                        <a href="{{ route('dashboard.tools.relevancy') }}" class="underline ml-2">Open Relevancy
+                            Tool</a>
                     </div>
                 @endif
 
                 @if($quotaRemaining > 0)
                     <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 px-4 py-3 rounded">
-                        📝 We should still create <strong>{{ $quotaRemaining }}</strong> questions this month to hit our quota! (quota: {{ $monthlyQuota }}).
+                        📝 We should still create <strong>{{ $quotaRemaining }}</strong> questions this month to hit our
+                        quota! (quota: {{ $monthlyQuota }}).
                         <a href="{{ route('questions.create') }}" class="underline ml-2">Add Questions</a>
+                    </div>
+                @endif
+
+                @if($similarityTotal > 0)
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 px-4 py-3 rounded">
+                        🔍 You have <strong>{{ $similarityTotal }}</strong> unhandled question similarities.
+                        <a href="{{ route('dashboard.tools.similarities') }}" class="underline ml-2">Open Similarity
+                            Tool</a>
                     </div>
                 @endif
 

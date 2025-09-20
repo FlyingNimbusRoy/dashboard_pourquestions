@@ -52,8 +52,20 @@
             </a>
         </div>
 
+        <div class="bg-white shadow-lg rounded-lg p-6 flex flex-col items-start">
+            <h2 class="text-xl font-semibold mb-2">Question Similarities Tool</h2>
+            <p class="text-gray-600 mb-4">
+                Review and resolve similar questions to keep the database clean.
+            </p>
+            <a href="{{ route('dashboard.tools.similarities') }}"
+               class="px-4 w-full py-2 dashboard__cta text-white rounded hover:bg-blue-700">
+                Open Tool
+            </a>
+        </div>
 
-{{--        <!-- Gamepack Batch Tool -->--}}
+
+
+        {{--        <!-- Gamepack Batch Tool -->--}}
 {{--        <div class="bg-white shadow-md rounded-lg p-6 flex flex-col items-start">--}}
 {{--            <h2 class="text-xl font-semibold mb-2">Gamepack Batch Tool</h2>--}}
 {{--            <p class="text-gray-600 mb-4">--}}
