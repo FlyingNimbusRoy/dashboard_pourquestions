@@ -12,7 +12,7 @@ class Modifier extends Model
     protected $fillable = [
         'name',
         'description',
-        'fa_icon',
+        'icon',
         'turnbased',
         'effects',
         'coupled_gamepack_id',

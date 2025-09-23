@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\ModifierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\QuestionController;
@@ -56,19 +57,24 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::get('tools/category-balance', [ToolsController::class, 'categoryBalance'])->name('tools.category_balance');
         Route::get('/tools/recategorisation', [ToolsController::class, 'recategorisation'])->name('tools.recategorisation');
         Route::patch('/tools/recategorisation/{id}', [ToolsController::class, 'recategorisationUpdate'])->name('tools.recategorisation.update');
+        Route::get('tools/similarities', [ToolsController::class, 'similarities'])->name('tools.similarities');
+        Route::post('tools/similarities/{id}/handle', [ToolsController::class, 'markSimilarityHandled'])->name('tools.similarities.handle');
 
         //Users
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::patch('users/{user}/toggle-admin', [UserController::class, 'toggleAdmin'])->name('users.toggle-admin');
 
-        Route::get('tools/similarities', [ToolsController::class, 'similarities'])->name('tools.similarities');
-        Route::post('tools/similarities/{id}/handle', [ToolsController::class, 'markSimilarityHandled'])->name('tools.similarities.handle');
+        //aditional routes for modifiers:
+        Route::get('modifiers/upload', [ModifierController::class, 'uploadForm'])->name('modifiers.upload');
+        Route::post('modifiers/upload', [ModifierController::class, 'uploadStore'])->name('modifiers.upload.store');
+        Route::delete('modifiers/upload/{filename}', [ModifierController::class, 'uploadDestroy'])->name('modifiers.upload.destroy');
 
         // Then the resource
         Route::resource('categories', CategoryController::class);
         Route::resource('gamepacks', GamepackController::class);
         Route::resource('characters', CharacterController::class);
         Route::resource('comments', CommentController::class);
+        Route::resource('modifiers', ModifierController::class);
     });
 });
 
