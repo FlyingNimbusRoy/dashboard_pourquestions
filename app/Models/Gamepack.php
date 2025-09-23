@@ -19,4 +19,12 @@ class Gamepack extends Model
         'price',
         'url_coverart',
     ];
+
+    /**
+     * Alle modifiers die gekoppeld zijn aan dit gamepack.
+     */
+    public function modifiers()
+    {
+        return $this->hasMany(Modifier::class, 'coupled_gamepack_id');
+    }
 }
