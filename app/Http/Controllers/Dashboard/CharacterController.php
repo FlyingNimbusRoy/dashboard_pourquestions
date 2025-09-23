@@ -18,16 +18,19 @@ class CharacterController extends Controller
 
     public function create()
     {
+        $images = collect(File::files(public_path('img/characters')))->map(function ($file) {
+            return $file->getFilename();
+        });
         $gamepacks = Gamepack::all();
         $parents = Character::all();
-        return view('dashboard.characters.form', compact('gamepacks', 'parents'));
+        return view('dashboard.characters.form', compact('gamepacks', 'parents', 'images'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'url' => 'required|url|max:255',
+            'url' => 'required|string|max:255',
             'gamepack_id' => 'nullable|exists:gamepacks,id',
             'color_primary' => 'required|string|max:7',
             'color_secondary' => 'required|string|max:7',
@@ -44,16 +47,19 @@ class CharacterController extends Controller
 
     public function edit(Character $character)
     {
+        $images = collect(File::files(public_path('img/characters')))->map(function ($file) {
+            return $file->getFilename();
+        });
         $gamepacks = Gamepack::all();
         $parents = Character::where('id', '!=', $character->id)->get();
-        return view('dashboard.characters.form', compact('character', 'gamepacks', 'parents'));
+        return view('dashboard.characters.form', compact('character', 'gamepacks', 'parents', 'images'));
     }
 
     public function update(Request $request, Character $character)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'url' => 'required|url|max:255',
+            'url' => 'required|string|max:255',
             'gamepack_id' => 'nullable|exists:gamepacks,id',
             'color_primary' => 'required|string|max:7',
             'color_secondary' => 'required|string|max:7',

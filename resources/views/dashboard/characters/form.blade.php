@@ -30,17 +30,18 @@
             @error('name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
         </div>
 
-        <!-- URL -->
-        <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">URL</label>
-            <input type="url" name="url" value="{{ old('url', $character->url ?? '') }}" class="w-full border rounded py-2 px-3">
-            @error('url') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-        </div>
-
         <!-- URL / Character Image -->
         <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">Character Image (URL or filename in img/characters)</label>
-            <input type="text" name="url" id="character-url" value="{{ old('url', $character->url ?? '') }}" class="w-full border rounded py-2 px-3">
+            <select name="url" id="character-url" class="w-full border rounded py-2 px-3 mb-2">
+                <option value="">-- Select Character Image --</option>
+                @foreach($images as $image)
+                    <option value="{{ $image }}" {{ old('url', $character->url ?? '') == $image ? 'selected' : '' }}>
+                        {{ $image }}
+                    </option>
+                @endforeach
+            </select>
+            <!-- <input type="text" name="url" id="character-url" value="{{ old('url', $character->url ?? '') }}" class="w-full border rounded py-2 px-3"> -->
             @error('url') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
 
             <!-- Preview Container -->
