@@ -11,7 +11,6 @@ use App\Http\Controllers\Dashboard\CommentController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect()->route('dashboard');
@@ -23,8 +22,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -42,7 +40,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/import', [QuestionController::class, 'importExcel'])->name('import');
         Route::get('/template', [QuestionController::class, 'downloadTemplate'])->name('template');
     });
-
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         // Custom upload routes first

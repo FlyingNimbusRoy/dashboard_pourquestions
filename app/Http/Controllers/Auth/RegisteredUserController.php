@@ -39,11 +39,20 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            // optionally set default is_admin = 0
+            'is_admin' => 0,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
+
+        if (! $user->is_admin) {
+            Auth::logout(); // log them back out
+            return redirect()
+                ->route('login')
+                ->with('status', 'Account created. Pending admin approval before login.');
+        }
 
         return redirect(route('dashboard', absolute: false));
     }
