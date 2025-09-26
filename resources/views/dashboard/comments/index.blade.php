@@ -16,22 +16,24 @@
         </a>
     </div>
 
-    <table class="min-w-full bg-white border rounded">
-        <thead>
+    <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
+        <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
         <tr>
-            <th class="py-2 px-4 border-b">ID</th>
-            <th class="py-2 px-4 border-b">Comment</th>
-            <th class="py-2 px-4 border-b">Created</th>
-            <th class="py-2 px-4 border-b">Actions</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Comment</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
         </tr>
         </thead>
+
         <tbody>
         @forelse($comments as $comment)
             <tr class="border-b">
-                <td class="py-2 px-4">{{ $comment->id }}</td>
-                <td class="py-2 px-4">{{ $comment->comment }}</td>
-                <td class="py-2 px-4">{{ $comment->created_at->diffForHumans() }}</td>
-                <td class="py-2 px-4 flex gap-2">
+                <td class="px-6 py-3">{{ $comment->id }}</td>
+                <td class="px-6 py-3">{{ $comment->comment }}</td>
+                <td class="px-6 py-3">{{ $comment->created_at->diffForHumans() }}</td>
+                <td class="px-6 py-3 flex gap-2">
                     <a href="{{ route('dashboard.comments.edit', $comment) }}"
                        class="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500 text-white">Edit</a>
                     <form action="{{ route('dashboard.comments.destroy', $comment) }}" method="POST"
@@ -52,7 +54,7 @@
         @endforelse
         </tbody>
     </table>
-
+    </div>
     <div class="mt-4">
         {{ $comments->links() }}
     </div>

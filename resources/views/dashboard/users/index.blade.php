@@ -9,7 +9,7 @@
         </div>
     @endif
 
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
             <tr>
@@ -17,7 +17,7 @@
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Admin</th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">

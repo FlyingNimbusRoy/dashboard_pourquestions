@@ -16,57 +16,83 @@
             </a>
         </div>
 
-        <table class="min-w-full bg-white border rounded">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>URL</th>
-                <th>Gamepack</th>
-                <th>Primary Color</th>
-                <th>Secondary Color</th>
-                <th>Muted Primary</th>
-                <th>Muted Secondary</th>
-                <th>Show on Homepage</th>
-                <th>Parent Character</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($characters as $c)
+        <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                 <tr>
-                    <td>{{ $c->id }}</td>
-                    <td>{{ $c->name }}</td>
-                    <td><a href="{{ $c->url }}" target="_blank">{{ $c->url }}</a></td>
-                    <td>{{ $c->gamepack?->name }}</td>
-                    <td><span class="inline-block w-6 h-6 rounded"
-                              style="background-color: {{ $c->color_primary }}"></span> {{ $c->color_primary }}</td>
-                    <td><span class="inline-block w-6 h-6 rounded"
-                              style="background-color: {{ $c->color_secondary }}"></span> {{ $c->color_secondary }}</td>
-                    <td><span class="inline-block w-6 h-6 rounded"
-                              style="background-color: {{ $c->color_muted_primary }}"></span> {{ $c->color_muted_primary }}
-                    </td>
-                    <td><span class="inline-block w-6 h-6 rounded"
-                              style="background-color: {{ $c->color_muted_secondary }}"></span> {{ $c->color_muted_secondary }}
-                    </td>
-                    <td>{{ $c->show_on_homepage ? 'Yes' : 'No' }}</td>
-                    <td>{{ $c->parent?->name }}</td>
-                    <td class="whitespace-nowrap flex gap-2">
-                        <a href="{{ route('dashboard.characters.edit', $c) }}"
-                           class="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500 text-blue-600">Edit</a>
-                        <form action="{{ route('dashboard.characters.destroy', $c) }}" method="POST"
-                              onsubmit="return confirm('Delete this character?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-500 px-2 py-1 rounded hover:bg-red-700 text-red-600">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">URL</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Gamepack</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Colors</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Show on Homepage</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Parent Character</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Actions</th>
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
+                </thead>
+
+
+                <tbody class="divide-y divide-gray-200">
+                @foreach($characters as $c)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $c->id }}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $c->name }}</td>
+                        <td class="px-6 py-4 text-sm text-blue-600 underline">
+                            <a href="{{ $c->url }}" target="_blank">{{ $c->url }}</a>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $c->gamepack?->name }}</td>
+
+                        <td class="px-6 py-4 text-sm text-gray-700 flex items-center gap-2">
+            <span class="inline-block w-5 h-5 rounded"
+                  style="background-color: {{ $c->color_primary }}"></span>
+                            {{ $c->color_primary }}
+                        </td>
+
+                        <td class="px-6 py-4 text-sm text-gray-700 flex items-center gap-2">
+            <span class="inline-block w-5 h-5 rounded"
+                  style="background-color: {{ $c->color_secondary }}"></span>
+                            {{ $c->color_secondary }}
+                        </td>
+
+                        <td class="px-6 py-4 text-sm text-gray-700 flex items-center gap-2">
+            <span class="inline-block w-5 h-5 rounded"
+                  style="background-color: {{ $c->color_muted_primary }}"></span>
+                            {{ $c->color_muted_primary }}
+                        </td>
+
+                        <td class="px-6 py-4 text-sm text-gray-700 flex items-center gap-2">
+            <span class="inline-block w-5 h-5 rounded"
+                  style="background-color: {{ $c->color_muted_secondary }}"></span>
+                            {{ $c->color_muted_secondary }}
+                        </td>
+
+                        <td class="px-6 py-4 text-sm text-gray-700">
+                            {{ $c->show_on_homepage ? 'Yes' : 'No' }}
+                        </td>
+
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $c->parent?->name }}</td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-right flex gap-2">
+                            <a href="{{ route('dashboard.characters.edit', $c) }}"
+                               class="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded text-xs font-semibold text-gray-900">
+                                Edit
+                            </a>
+                            <form action="{{ route('dashboard.characters.destroy', $c) }}" method="POST"
+                                  onsubmit="return confirm('Delete this character?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-semibold text-white">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+
+            </table>
+        </div>
 
         {{ $characters->links() }}
     </div>

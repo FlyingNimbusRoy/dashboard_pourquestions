@@ -17,44 +17,49 @@
             </a>
         </div>
 
-        <table class="min-w-full bg-white border rounded">
-            <thead>
-            <tr>
-                <th class="py-2 px-4 border-b">ID</th>
-                <th class="py-2 px-4 border-b">Name</th>
-                <th class="py-2 px-4 border-b">Description</th>
-                <th class="py-2 px-4 border-b">Icon</th>
-                <th class="py-2 px-4 border-b">Color</th>
-                <th class="py-2 px-4 border-b">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($categories as $category)
-                <tr class="border-b">
-                    <td class="py-2 px-4">{{ $category->id }}</td>
-                    <td class="py-2 px-4">{{ $category->name }}</td>
-                    <td class="py-2 px-4">{{ $category->description }}</td>
-                    <td class="py-2 px-4">{{ $category->icon }}</td>
-                    <td class="py-2 px-4">
-                        <span class="inline-block w-6 h-6 rounded" style="background-color: {{ $category->color }}"></span>
-                        {{ $category->color }}
-                    </td>
-                    <td class="py-2 px-4 flex gap-2">
-                        <a href="{{ route('dashboard.categories.edit', $category) }}"
-                           class="bg-yellow-400 px-2 py-1 rounded text-blue-600 hover:bg-yellow-500">Edit</a>
-                        <form action="{{ route('dashboard.categories.destroy', $category) }}" method="POST"
-                              onsubmit="return confirm('Delete this category?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-500 px-2 py-1 rounded hover:bg-red-700 text-red-600">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
+        <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icon</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Color</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                @foreach($categories as $category)
+                    <tr class="border-b">
+                        <td class="px-6 py-3">{{ $category->id }}</td>
+                        <td class="px-6 py-3">{{ $category->name }}</td>
+                        <td class="px-6 py-3">{{ $category->description }}</td>
+                        <td class="px-6 py-3">{{ $category->icon }}</td>
+                        <td class="px-6 py-3">
+                            <span class="inline-block w-6 h-6 rounded"
+                                  style="background-color: {{ $category->color }}"></span>
+                            {{ $category->color }}
+                        </td>
+                        <td class="px-6 py-3 flex gap-2">
+                            <a href="{{ route('dashboard.categories.edit', $category) }}"
+                               class="bg-yellow-400 px-2 py-1 rounded text-blue-600 hover:bg-yellow-500">Edit</a>
+                            <form action="{{ route('dashboard.categories.destroy', $category) }}" method="POST"
+                                  onsubmit="return confirm('Delete this category?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="bg-red-500 px-2 py-1 rounded hover:bg-red-700 text-red-600">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
 
         {{ $categories->links() }}
     </div>

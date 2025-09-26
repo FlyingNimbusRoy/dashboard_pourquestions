@@ -96,14 +96,15 @@
         <!-- Questions Table -->
         <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-blue-50">
+                <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Question</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Difficulty</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Question</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Difficulty</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
                 </thead>
+
                 <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($questions as $question)
                     <tr class="hover:bg-blue-50 transition">
