@@ -114,6 +114,8 @@ class QuestionController extends Controller
             'answers.*.is_correct' => 'boolean',
         ]);
 
+        $validated['last_compared_at'] = null;
+
         $question->update($validated);
 
         // Replace old answers

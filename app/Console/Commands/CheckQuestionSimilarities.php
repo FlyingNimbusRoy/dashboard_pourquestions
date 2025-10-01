@@ -11,58 +11,58 @@ class CheckQuestionSimilarities extends Command
 {
     protected $signature = 'questions:check-similarities
         {--threshold=0.8 : Minimum similarity score required (0-1)}
-        {--limit=0 : Optional limit on number of questions to process (0 = all)}';
+        {--limit=0 : Optional limit on number of new questions to process (0 = all)}';
 
-    protected $description = 'Check for similar questions and store them in question_similarities table';
+    protected $description = 'Incrementally check for similar questions and store them in question_similarities table';
 
     public function handle()
     {
         $threshold = (float) $this->option('threshold');
         $limit     = (int) $this->option('limit');
 
-        $this->info("🔍 Fetching questions...");
+        $this->info("🔍 Fetching unprocessed questions...");
 
+        // Only fetch questions that have never been compared
         $questions = $limit > 0
-            ? Question::limit($limit)->get()
-            : Question::all();
+            ? Question::whereNull('last_compared_at')->limit($limit)->get()
+            : Question::whereNull('last_compared_at')->get();
 
         $count = $questions->count();
-        if ($count < 2) {
-            $this->warn("Not enough questions to compare.");
+        if ($count === 0) {
+            $this->info("✅ No new questions to compare.");
             return Command::SUCCESS;
         }
 
-        $this->info("Comparing {$count} questions with threshold {$threshold}...");
+        $this->info("Comparing {$count} new questions with threshold {$threshold}...");
 
-        // Preload already-known similarities
         $existing = QuestionSimilarity::get()
             ->map(fn ($s) => "{$s->question_id}-{$s->similar_question_id}")
             ->flip();
 
         $this->info("Loaded " . count($existing) . " existing similarities.");
 
-        $progress = $this->output->createProgressBar(($count * ($count - 1)) / 2);
+        $progress = $this->output->createProgressBar($count);
         $progress->start();
 
-        $toInsert = [];
         $fuzz = new Fuzz();
+        $toInsert = [];
 
-        foreach ($questions as $i => $q1) {
+        foreach ($questions as $q1) {
             $text1 = $this->normalize($q1->vraag);
 
-            for ($j = $i + 1; $j < $count; $j++) {
-                $progress->advance();
+            // Compare only against other questions (already in system)
+            $others = Question::where('id', '!=', $q1->id)->get();
 
-                $q2 = $questions[$j];
+            foreach ($others as $q2) {
                 $text2 = $this->normalize($q2->vraag);
 
-                // Skip empty/very short strings
                 if (strlen($text1) < 3 || strlen($text2) < 3) {
                     continue;
                 }
 
-                $key = "{$q1->id}-{$q2->id}";
-                if (isset($existing[$key])) {
+                $key1 = "{$q1->id}-{$q2->id}";
+                $key2 = "{$q2->id}-{$q1->id}";
+                if (isset($existing[$key1]) || isset($existing[$key2])) {
                     continue;
                 }
 
@@ -79,53 +79,47 @@ class CheckQuestionSimilarities extends Command
                     ];
                 }
 
-                // Batch insert every 500 matches
                 if (count($toInsert) >= 500) {
                     QuestionSimilarity::insert($toInsert);
                     $toInsert = [];
                 }
             }
+
+            // ✅ Mark this question as fully compared
+            $q1->update(['last_compared_at' => now()]);
+
+            $progress->advance();
         }
 
-        // Insert remaining
         if (!empty($toInsert)) {
             QuestionSimilarity::insert($toInsert);
         }
 
         $progress->finish();
         $this->newLine(2);
-        $this->info("✅ Similarity check complete!");
+        $this->info("✅ Incremental similarity check complete!");
         return Command::SUCCESS;
     }
 
-    /**
-     * Normalize text (lowercase, strip punctuation, collapse spaces)
-     */
     protected function normalize(string $text): string
     {
         $text = mb_strtolower($text);
-        $text = preg_replace('/[^\p{L}\p{N}\s]+/u', ' ', $text); // keep only letters/numbers
-        $text = preg_replace('/\s+/', ' ', $text);               // collapse spaces
+        $text = preg_replace('/[^\p{L}\p{N}\s]+/u', ' ', $text);
+        $text = preg_replace('/\s+/', ' ', $text);
         return trim($text);
     }
 
-    /**
-     * Compute similarity score using FuzzyWuzzy + traditional metrics.
-     */
     protected function similarity(string $a, string $b, Fuzz $fuzz): float
     {
-        // FuzzyWuzzy scorers
         $ratio     = $fuzz->ratio($a, $b) / 100;
         $partial   = $fuzz->partialRatio($a, $b) / 100;
         $tokenSort = $fuzz->tokenSortRatio($a, $b) / 100;
         $tokenSet  = $fuzz->tokenSetRatio($a, $b) / 100;
 
-        // Traditional scorers
         $lev = 1 - (levenshtein($a, $b) / max(strlen($a), strlen($b)));
         similar_text($a, $b, $percent);
         $sim = $percent / 100;
 
-        // Weighted blend (you can tweak these weights)
         return (
             ($ratio * 0.2) +
             ($partial * 0.2) +
