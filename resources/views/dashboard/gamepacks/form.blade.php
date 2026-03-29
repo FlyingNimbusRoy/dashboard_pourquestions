@@ -24,6 +24,15 @@
         </div>
 
         <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">Flavor Text</label>
+            <input type="text" name="flavor_text"
+                   value="{{ old('flavor_text', $gamepack->flavor_text ?? '') }}"
+                   class="w-full border rounded py-2 px-3"
+                   placeholder="Short tagline shown in the shop...">
+            @error('flavor_text') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+        </div>
+
+        <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
             <input type="text" name="description" value="{{ old('description', $gamepack->description ?? '') }}" class="w-full border rounded py-2 px-3">
             @error('description') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror

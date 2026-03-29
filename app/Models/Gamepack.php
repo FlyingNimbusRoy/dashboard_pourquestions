@@ -18,6 +18,7 @@ class Gamepack extends Model
         'color',
         'price',
         'url_coverart',
+        'flavor_text',
     ];
 
     /**
