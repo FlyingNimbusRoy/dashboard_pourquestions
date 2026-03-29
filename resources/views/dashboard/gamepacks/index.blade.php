@@ -12,6 +12,7 @@
 
         <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 md:gap-6 mb-4">
             <a href="{{ route('dashboard.gamepacks.create') }}"
+
                class="w-full px-5 py-3 dashboard__cta text-white rounded-lg shadow hover:bg-blue-700 transition text-center">
                 Create New Gamepack
             </a>

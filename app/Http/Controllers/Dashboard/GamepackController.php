@@ -21,18 +21,16 @@ class GamepackController extends Controller
 
     public function store(Request $request)
     {
-//        dd($request->all());
-
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
-            'icon' => 'nullable|string|max:255',
-            'color' => 'nullable|string|max:7',
-            'price' => 'required|numeric|min:0',
-            'url_coverart' => 'nullable|url|max:255',
+            'name'         => 'required|string|max:255',
+            'category'     => 'required|in:gamepack,questionpack,skinpack',
+            'flavor_text'  => 'nullable|string|max:255',
+            'description'  => 'nullable|string|max:1000',
+            'icon'         => 'nullable|string|max:255',
+            'color'        => 'nullable|string|max:7',
+            'price'        => 'required|numeric|min:0',
+            'url_coverart' => 'nullable|string|max:255',
         ]);
-
-
 
         Gamepack::create($validated);
 
@@ -47,15 +45,16 @@ class GamepackController extends Controller
     public function update(Request $request, Gamepack $gamepack)
     {
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
-            'icon'        => 'nullable|string|max:255',
-            'color'       => 'nullable|string|max:7',
-            'price'       => 'required|numeric|min:0',
-            'url_coverart'=> 'nullable|url|max:255',
-            'flavor_text' => 'nullable|string|max:255',
+            'name'         => 'required|string|max:255',
+            'category'     => 'required|in:gamepack,questionpack,skinpack',
+            'flavor_text'  => 'nullable|string|max:255',
+            'description'  => 'nullable|string|max:1000',
+            'icon'         => 'nullable|string|max:255',
+            'color'        => 'nullable|string|max:7',
+            'price'        => 'required|numeric|min:0',
+            'url_coverart' => 'nullable|string|max:255',
         ]);
-        
+
         $gamepack->update($validated);
 
         return redirect()->route('dashboard.gamepacks.index')->with('success', 'Gamepack updated!');
