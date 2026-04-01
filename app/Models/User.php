@@ -46,4 +46,12 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
         ];
     }
+
+    /**
+     * Gamepacks purchased by this user (rows in gamepack_purchased).
+     */
+    public function gamepacks()
+    {
+        return $this->hasMany(GamepackPurchased::class, 'user_id');
+    }
 }

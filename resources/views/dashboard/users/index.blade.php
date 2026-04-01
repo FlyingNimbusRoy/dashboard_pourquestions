@@ -56,13 +56,13 @@
                                 </button>
                             </form>
 
-                            {{-- Assign all gamepacks — admin only --}}
-                            @if(auth()->user()->is_admin)
+                            {{-- Assign all gamepacks — admin only, hidden if user has all --}}
+                            @if(auth()->user()->is_admin && $user->gamepacks_count < $totalGamepacks)
                                 <form action="{{ route('dashboard.users.assign-all-gamepacks', $user) }}" method="POST"
                                       onsubmit="return confirm('Assign all missing gamepacks to {{ addslashes($user->name) }}?')">
                                     @csrf
                                     <button type="submit"
-                                            class="px-3 py-1 rounded text-white bg-purple-600 hover:bg-purple-700">
+                                            class="px-3 py-1 rounded text-white bg-green-500 hover:bg-blue-700">
                                         Assign All Packs
                                     </button>
                                 </form>

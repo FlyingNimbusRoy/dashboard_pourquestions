@@ -60,14 +60,20 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::get('tools/similarities', [ToolsController::class, 'similarities'])->name('tools.similarities');
         Route::post('tools/similarities/{id}/handle', [ToolsController::class, 'markSimilarityHandled'])->name('tools.similarities.handle');
 
-        //Users
+        // Users
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::patch('users/{user}/toggle-admin', [UserController::class, 'toggleAdmin'])->name('users.toggle-admin');
+        Route::post('users/{user}/assign-all-gamepacks', [UserController::class, 'assignAllGamepacks'])->name('users.assign-all-gamepacks');
 
-        //aditional routes for modifiers:
+        // Additional routes for modifiers:
         Route::get('modifiers/upload', [ModifierController::class, 'uploadForm'])->name('modifiers.upload');
         Route::post('modifiers/upload', [ModifierController::class, 'uploadStore'])->name('modifiers.upload.store');
         Route::delete('modifiers/upload/{filename}', [ModifierController::class, 'uploadDestroy'])->name('modifiers.upload.destroy');
+
+        // Gamepack upload routes (must be before resource)
+        Route::get('gamepacks/upload', [GamepackController::class, 'uploadForm'])->name('gamepacks.upload');
+        Route::post('gamepacks/upload', [GamepackController::class, 'uploadStore'])->name('gamepacks.upload.store');
+        Route::delete('gamepacks/upload/{filename}', [GamepackController::class, 'uploadDestroy'])->name('gamepacks.upload.destroy');
 
         // Then the resource
         Route::resource('categories', CategoryController::class);

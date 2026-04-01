@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Gamepack;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::paginate(20);
-        return view('dashboard.users.index', compact('users'));
+        $users = User::withCount('gamepacks')->paginate(20);
+        $totalGamepacks = Gamepack::count();
+        return view('dashboard.users.index', compact('users', 'totalGamepacks'));
     }
 
     public function toggleAdmin(User $user)
@@ -47,6 +50,7 @@ class UserController extends Controller
                 ->with('success', "{$user->name} already owns all gamepacks.");
         }
 
+        // Build rows for a bulk insert
         $now  = now();
         $rows = $missing->map(fn($pack) => [
             'gamepack_id' => $pack->id,
