@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Gamepack;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class GamepackController extends Controller
 {
@@ -64,5 +65,37 @@ class GamepackController extends Controller
     {
         $gamepack->delete();
         return redirect()->route('dashboard.gamepacks.index')->with('success', 'Gamepack deleted!');
+    }
+
+    public function uploadForm()
+    {
+        $images = File::files(public_path('img/gamepacks'));
+        return view('dashboard.gamepacks.upload', compact('images'));
+    }
+
+    public function uploadStore(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ]);
+
+        $file = $request->file('image');
+        $file->move(public_path('img/gamepacks'), $file->getClientOriginalName());
+
+        return redirect()->route('dashboard.gamepacks.upload')->with('success', 'Image uploaded!');
+    }
+
+    public function uploadDestroy($filename)
+    {
+        $path = public_path('img/gamepacks/' . $filename);
+
+        if (File::exists($path)) {
+            File::delete($path);
+            return redirect()->route('dashboard.gamepacks.upload')
+                ->with('success', 'Image deleted successfully!');
+        }
+
+        return redirect()->route('dashboard.gamepacks.upload')
+            ->with('error', 'Image not found.');
     }
 }
