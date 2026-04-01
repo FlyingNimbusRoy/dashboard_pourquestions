@@ -9,6 +9,12 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -29,23 +35,40 @@
                     <td class="px-6 py-4 text-sm">
                         @if($user->is_admin)
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    Admin
-                                </span>
+                                Admin
+                            </span>
                         @else
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                    User
-                                </span>
+                                User
+                            </span>
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-sm text-right">
-                        <form action="{{ route('dashboard.users.toggle-admin', $user) }}" method="POST">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit"
-                                    class="px-3 py-1 rounded text-white {{ $user->is_admin ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700' }}">
-                                {{ $user->is_admin ? 'Revoke Admin' : 'Make Admin' }}
-                            </button>
-                        </form>
+                    <td class="px-6 py-4 text-sm">
+                        <div class="flex items-center gap-2 flex-wrap">
+
+                            {{-- Toggle admin status --}}
+                            <form action="{{ route('dashboard.users.toggle-admin', $user) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit"
+                                        class="px-3 py-1 rounded text-white {{ $user->is_admin ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700' }}">
+                                    {{ $user->is_admin ? 'Revoke Admin' : 'Make Admin' }}
+                                </button>
+                            </form>
+
+                            {{-- Assign all gamepacks — admin only --}}
+                            @if(auth()->user()->is_admin)
+                                <form action="{{ route('dashboard.users.assign-all-gamepacks', $user) }}" method="POST"
+                                      onsubmit="return confirm('Assign all missing gamepacks to {{ addslashes($user->name) }}?')">
+                                    @csrf
+                                    <button type="submit"
+                                            class="px-3 py-1 rounded text-white bg-purple-600 hover:bg-purple-700">
+                                        Assign All Packs
+                                    </button>
+                                </form>
+                            @endif
+
+                        </div>
                     </td>
                 </tr>
             @endforeach

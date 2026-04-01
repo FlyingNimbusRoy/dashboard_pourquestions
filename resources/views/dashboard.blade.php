@@ -13,7 +13,7 @@
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
                          stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6m-6 0l2 2m-2-2L5 21h14"/>
+                              d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H15v-5h-6v5H4a1 1 0 01-1-1V9.75z"/>
                     </svg>
                     Home
                 </a>
@@ -23,7 +23,7 @@
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
                          stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M4 6h16M4 20h16"/>
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6m-3 4v4m0 4h.01"/>
                     </svg>
                     Questions
                 </a>
@@ -33,7 +33,7 @@
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
                          stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.47 0-2.857-.316-4.02-.87L3 20l1.33-3.33C3.48 15.57 3 13.84 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                              d="M7 8h10M7 12h6m-8 8l4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2H9l-4 4z"/>
                     </svg>
                     Comments
                 </a>
@@ -44,20 +44,35 @@
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
                          stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M4 6h16M4 20h16"/>
+                              d="M7 7h.01M3 5a2 2 0 012-2h5.586a1 1 0 01.707.293l9.414 9.414a2 2 0 010 2.828l-5.586 5.586a2 2 0 01-2.828 0L3.293 11.707A1 1 0 013 11V5z"/>
                     </svg>
                     Categories
                 </a>
 
-                <a href="{{ route('dashboard.gamepacks.index') }}"
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
-                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
-                         stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M4 6h16M4 20h16"/>
-                    </svg>
-                    Gamepacks
-                </a>
+                <!-- Gamepacks Menu -->
+                <div x-data="{ open: {{ request()->routeIs('dashboard.gamepacks.*') ? 'true' : 'false' }} }" class="relative">
+                    <button @click="open = !open"
+                            class="group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
+                        <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+                        </svg>
+                        Gamepacks
+                        <svg :class="{'transform rotate-90': open}" class="ml-auto h-4 w-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <div x-show="open" class="mt-1 ml-6 flex flex-col space-y-1">
+                        <a href="{{ route('dashboard.gamepacks.index') }}"
+                           class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.gamepacks.index') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
+                            Overview
+                        </a>
+                        <a href="{{ route('dashboard.gamepacks.upload') }}"
+                           class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.gamepacks.upload*') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
+                            Upload
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Modifiers Menu -->
                 <div x-data="{ open: {{ request()->routeIs('dashboard.modifiers.*') ? 'true' : 'false' }} }" class="relative">
@@ -65,7 +80,7 @@
                             class="group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
                         <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M11.983 2.25c-.38 0-.74.214-.91.553l-1.045 2.09a7.48 7.48 0 00-1.902.785L6.06 4.85a.963.963 0 00-1.317.126l-1.5 1.5a.963.963 0 00.126 1.317l.828 1.067a7.48 7.48 0 00-.785 1.902L2.322 11.07a.963.963 0 00-.553.91v2.04c0 .38.214.74.553.91l2.09 1.045c.183.683.45 1.327.785 1.902l-1.067.828a.963.963 0 00-.126 1.317l1.5 1.5c.336.336.87.376 1.317.126l1.067-.828c.575.335 1.219.602 1.902.785l1.045 2.09c.17.34.53.553.91.553h2.04c.38 0 .74-.214.91-.553l1.045-2.09a7.48 7.48 0 001.902-.785l1.067.828c.447.25.981.21 1.317-.126l1.5-1.5a.963.963 0 00-.126-1.317l-.828-1.067c.335-.575.602-1.219.785-1.902l2.09-1.045c.34-.17.553-.53.553-.91v-2.04c0-.38-.214-.74-.553-.91l-2.09-1.045a7.48 7.48 0 00-.785-1.902l.828-1.067a.963.963 0 00.126-1.317l-1.5-1.5a.963.963 0 00-1.317-.126l-1.067.828a7.48 7.48 0 00-1.902-.785l-1.045-2.09a.963.963 0 00-.91-.553h-2.04zM12 15.75a3.75 3.75 0 110-7.5 3.75 3.75 0 010 7.5z"/>
+                                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                         </svg>
                         Modifiers
                         <svg :class="{'transform rotate-90': open}" class="ml-auto h-4 w-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +106,7 @@
                             class="group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
                         <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M4 6h16M4 20h16"/>
+                                  d="M5.121 17.804A8.966 8.966 0 0112 15a8.966 8.966 0 016.879 2.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         Characters
                         <svg :class="{'transform rotate-90': open}" class="ml-auto h-4 w-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,18 +131,17 @@
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
                          stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17 20h5V10H2v10h5m10-6a4 4 0 11-8 0 4 4 0 018 0z"/>
+                              d="M17 20h2a2 2 0 002-2v-1a5 5 0 00-4-4.9M15 7a3 3 0 11-6 0 3 3 0 016 0zm-9 13v-1a5 5 0 015-5h4a5 5 0 015 5v1"/>
                     </svg>
                     Users
                 </a>
 
                 <a href="{{ route('dashboard.tools.index') }}"
                    class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
-                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500"
-                         xmlns="http://www.w3.org/2000/svg" fill="none"
-                         viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M3 21l1.5-1.5m15-15L21 3m-3 3l-3 3m-6 6l-3 3m3-3a9 9 0 0112.728-12.728A9 9 0 016 18z"/>
+                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM12 15a3 3 0 100-6 3 3 0 000 6z"/>
                     </svg>
                     Tools
                 </a>
