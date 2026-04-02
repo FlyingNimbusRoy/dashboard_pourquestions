@@ -12,6 +12,11 @@ class GamepackPurchased extends Model
         'gamepack_id',
         'user_id',
         'opened',
+        'access_through_admin_grant',
+    ];
+
+    protected $casts = [
+        'access_through_admin_grant' => 'boolean',
     ];
 
     public function user()

@@ -56,6 +56,7 @@ class UserController extends Controller
             'gamepack_id' => $pack->id,
             'user_id'     => $user->id,
             'opened'      => 0,
+            'access_through_admin_grant' => true,
             'created_at'  => $now,
             'updated_at'  => $now,
         ])->toArray();

@@ -38,7 +38,6 @@
                     Comments
                 </a>
 
-
                 <a href="{{ route('dashboard.categories.index') }}"
                    class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
                     <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none"
@@ -87,7 +86,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </button>
-
                     <div x-show="open" class="mt-1 ml-6 flex flex-col space-y-1">
                         <a href="{{ route('dashboard.modifiers.index') }}"
                            class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.modifiers.index') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
@@ -113,7 +111,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </button>
-
                     <div x-show="open" class="mt-1 ml-6 flex flex-col space-y-1">
                         <a href="{{ route('dashboard.characters.index') }}"
                            class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.characters.index') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
@@ -122,6 +119,31 @@
                         <a href="{{ route('dashboard.characters.upload') }}"
                            class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.characters.upload*') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
                             Upload
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Achievements Menu -->
+                <div x-data="{ open: {{ request()->routeIs('dashboard.achievements.*') ? 'true' : 'false' }} }" class="relative">
+                    <button @click="open = !open"
+                            class="group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:bg-blue-100 hover:text-blue-700 transition">
+                        <svg class="mr-3 h-5 w-5 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        Achievements
+                        <svg :class="{'transform rotate-90': open}" class="ml-auto h-4 w-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <div x-show="open" class="mt-1 ml-6 flex flex-col space-y-1">
+                        <a href="{{ route('dashboard.achievements.index') }}"
+                           class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.achievements.index') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
+                            Overview
+                        </a>
+                        <a href="{{ route('dashboard.achievements.upload') }}"
+                           class="text-sm px-5 py-2 rounded hover:bg-blue-100 hover:text-blue-700 transition {{ request()->routeIs('dashboard.achievements.upload*') ? 'bg-blue-50 text-blue-700 font-semibold' : '' }}">
+                            Badge Images
                         </a>
                     </div>
                 </div>

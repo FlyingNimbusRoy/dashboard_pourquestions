@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ModifierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\DashboardController;
@@ -70,10 +71,13 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::post('modifiers/upload', [ModifierController::class, 'uploadStore'])->name('modifiers.upload.store');
         Route::delete('modifiers/upload/{filename}', [ModifierController::class, 'uploadDestroy'])->name('modifiers.upload.destroy');
 
-        // Gamepack upload routes (must be before resource)
         Route::get('gamepacks/upload', [GamepackController::class, 'uploadForm'])->name('gamepacks.upload');
         Route::post('gamepacks/upload', [GamepackController::class, 'uploadStore'])->name('gamepacks.upload.store');
         Route::delete('gamepacks/upload/{filename}', [GamepackController::class, 'uploadDestroy'])->name('gamepacks.upload.destroy');
+
+        Route::get('achievements/upload', [AchievementController::class, 'uploadForm'])->name('achievements.upload');
+        Route::post('achievements/upload', [AchievementController::class, 'uploadStore'])->name('achievements.upload.store');
+        Route::delete('achievements/upload/{filename}', [AchievementController::class, 'uploadDestroy'])->name('achievements.upload.destroy');
 
         // Then the resource
         Route::resource('categories', CategoryController::class);
@@ -81,6 +85,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::resource('characters', CharacterController::class);
         Route::resource('comments', CommentController::class);
         Route::resource('modifiers', ModifierController::class);
+        Route::resource('achievements', AchievementController::class);
     });
 });
 
