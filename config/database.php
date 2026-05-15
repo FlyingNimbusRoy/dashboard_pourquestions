@@ -109,38 +109,36 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+        ],
+
+        // ── Wild Hunt (PourSpire Adventures) ──────────────────────────────────
+        // Reads/writes directly to the WildHunt database on the same server.
+        // Credentials are kept in .env as WILDHUNT_DB_* variables.
+        'wildhunt' => [
+            'driver'      => 'mysql',
+            'host'        => '127.0.0.1',
+            'port'        => '3306',
+            'database'    => env('WILDHUNT_DB_DATABASE'),
+            'username'    => env('WILDHUNT_DB_USERNAME'),
+            'password'    => env('WILDHUNT_DB_PASSWORD'),
+            'unix_socket' => '',
+            'charset'     => 'utf8mb4',
+            'collation'   => 'utf8mb4_unicode_ci',
+            'prefix'      => '',
+            'prefix_indexes' => true,
+            'strict'      => true,
+            'engine'      => null,
+            'options'     => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
         ],
 
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Migration Repository Table
-    |--------------------------------------------------------------------------
-    |
-    | This table keeps track of all the migrations that have already run for
-    | your application. Using this information, we can determine which of
-    | the migrations on disk haven't actually been run on the database.
-    |
-    */
 
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Redis Databases
-    |--------------------------------------------------------------------------
-    |
-    | Redis is an open source, fast, and advanced key-value store that also
-    | provides a richer body of commands than a typical key-value system
-    | such as Memcached. You may define your connection settings here.
-    |
-    */
 
     'redis' => [
 
@@ -181,3 +179,4 @@ return [
     ],
 
 ];
+

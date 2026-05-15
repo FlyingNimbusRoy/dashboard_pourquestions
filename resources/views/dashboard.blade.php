@@ -167,6 +167,52 @@
                     </svg>
                     Tools
                 </a>
+
+                <!-- ── Wild Hunt ────────────────────────────────────────────── -->
+                <div class="pt-2 pb-1 px-3">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-gray-400">WildHunt</p>
+                </div>
+
+                <!-- Quarries -->
+                <a href="{{ route('dashboard.wildhunt.quarries.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-purple-100 hover:text-purple-700 transition {{ request()->routeIs('dashboard.wildhunt.quarries.*') ? 'bg-purple-50 text-purple-700 font-semibold' : '' }}">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
+                    </svg>
+                    Quarries
+                </a>
+
+                <!-- Monsters -->
+                <a href="{{ route('dashboard.wildhunt.monsters.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-purple-100 hover:text-purple-700 transition {{ request()->routeIs('dashboard.wildhunt.monsters.*') ? 'bg-purple-50 text-purple-700 font-semibold' : '' }}">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                    Monsters
+                </a>
+
+                <!-- Skills -->
+                <a href="{{ route('dashboard.wildhunt.skills.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-purple-100 hover:text-purple-700 transition {{ request()->routeIs('dashboard.wildhunt.skills.*') ? 'bg-purple-50 text-purple-700 font-semibold' : '' }}">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Skills
+                </a>
+
+                <!-- Gear -->
+                <a href="{{ route('dashboard.wildhunt.gear.index') }}"
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-purple-100 hover:text-purple-700 transition {{ request()->routeIs('dashboard.wildhunt.gear.*') ? 'bg-purple-50 text-purple-700 font-semibold' : '' }}">
+                    <svg class="mr-3 h-5 w-5 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                    </svg>
+                    Gear
+                </a>
+
             </nav>
 
             <div class="px-6 py-4 border-t dashboard__label">
