@@ -11,6 +11,10 @@ use App\Http\Controllers\Dashboard\CharacterController;
 use App\Http\Controllers\Dashboard\ToolsController;
 use App\Http\Controllers\Dashboard\CommentController;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntQuarryController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntMonsterController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntSkillController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntGearController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -37,7 +41,6 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::put('/{question}', [QuestionController::class, 'update'])->name('update');
         Route::delete('/{question}', [QuestionController::class, 'destroy'])->name('destroy');
 
-        // FIXED: remove extra 'questions/' prefix in URL
         Route::get('/import', [QuestionController::class, 'importView'])->name('import.view');
         Route::post('/import', [QuestionController::class, 'importExcel'])->name('import');
         Route::get('/template', [QuestionController::class, 'downloadTemplate'])->name('template');
@@ -66,26 +69,50 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
         Route::patch('users/{user}/toggle-admin', [UserController::class, 'toggleAdmin'])->name('users.toggle-admin');
         Route::post('users/{user}/assign-all-gamepacks', [UserController::class, 'assignAllGamepacks'])->name('users.assign-all-gamepacks');
 
-        // Additional routes for modifiers:
+        // Modifier uploads
         Route::get('modifiers/upload', [ModifierController::class, 'uploadForm'])->name('modifiers.upload');
         Route::post('modifiers/upload', [ModifierController::class, 'uploadStore'])->name('modifiers.upload.store');
         Route::delete('modifiers/upload/{filename}', [ModifierController::class, 'uploadDestroy'])->name('modifiers.upload.destroy');
 
+        // Gamepack uploads
         Route::get('gamepacks/upload', [GamepackController::class, 'uploadForm'])->name('gamepacks.upload');
         Route::post('gamepacks/upload', [GamepackController::class, 'uploadStore'])->name('gamepacks.upload.store');
         Route::delete('gamepacks/upload/{filename}', [GamepackController::class, 'uploadDestroy'])->name('gamepacks.upload.destroy');
 
+        // Achievement uploads
         Route::get('achievements/upload', [AchievementController::class, 'uploadForm'])->name('achievements.upload');
         Route::post('achievements/upload', [AchievementController::class, 'uploadStore'])->name('achievements.upload.store');
         Route::delete('achievements/upload/{filename}', [AchievementController::class, 'uploadDestroy'])->name('achievements.upload.destroy');
 
-        // Then the resource
+        // Resource controllers
         Route::resource('categories', CategoryController::class);
         Route::resource('gamepacks', GamepackController::class);
         Route::resource('characters', CharacterController::class);
         Route::resource('comments', CommentController::class);
         Route::resource('modifiers', ModifierController::class);
         Route::resource('achievements', AchievementController::class);
+
+        // ── Wild Hunt ─────────────────────────────────────────────────────────
+        Route::prefix('wildhunt')->name('wildhunt.')->group(function () {
+
+            // Quarries
+            Route::resource('quarries', WildhuntQuarryController::class);
+
+            // Monsters — nested under quarries for create/edit context,
+            // but also top-level index for searching across all quarries
+            Route::get('monsters', [WildhuntMonsterController::class, 'index'])->name('monsters.index');
+            Route::get('monsters/create', [WildhuntMonsterController::class, 'create'])->name('monsters.create');
+            Route::post('monsters', [WildhuntMonsterController::class, 'store'])->name('monsters.store');
+            Route::get('monsters/{monsters}/edit', [WildhuntMonsterController::class, 'edit'])->name('monsters.edit');
+            Route::put('monsters/{monsters}', [WildhuntMonsterController::class, 'update'])->name('monsters.update');
+            Route::delete('monsters/{monsters}', [WildhuntMonsterController::class, 'destroy'])->name('monsters.destroy');
+
+            // Skills
+            Route::resource('skills', WildhuntSkillController::class);
+
+            // Gear
+            Route::resource('gear', WildhuntGearController::class);
+        });
     });
 });
 
