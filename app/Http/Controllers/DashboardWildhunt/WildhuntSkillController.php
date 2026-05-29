@@ -28,9 +28,12 @@ class WildhuntSkillController extends Controller
         if ($request->filled('damage_type')) {
             $query->where('class_skills.damage_type', $request->damage_type);
         }
+        if ($request->filled('rarity')) {
+            $query->where('class_skills.rarity', $request->rarity);
+        }
 
         $skills = $query->orderBy('classes.name')->orderBy('class_skills.level_required')->paginate(50);
-        $skills->appends($request->only('search', 'class_id', 'type', 'damage_type'));
+        $skills->appends($request->only('search', 'class_id', 'type', 'damage_type', 'rarity'));
 
         $classes     = $this->db()->table('classes')->orderBy('name')->get();
         $types       = ['atk', 'def', 'skill', 'heal', 'boon_atk', 'boon_def'];
@@ -51,17 +54,20 @@ class WildhuntSkillController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'slug'           => ['required', 'string', 'max:100'],
-            'name'           => ['required', 'string', 'max:100'],
-            'icon'           => ['required', 'string', 'max:10'],
-            'class_id'       => ['nullable', 'integer'],
-            'type'           => ['required', 'string'],
-            'damage_type'    => ['nullable', 'string'],
-            'action_cost'    => ['required', 'integer', 'min:0'],
-            'value'          => ['required', 'integer', 'min:0'],
-            'level_required' => ['required', 'integer', 'min:1'],
-            'description'    => ['required', 'string'],
-            'extra'          => ['nullable', 'string'],
+            'slug'            => ['required', 'string', 'max:100'],
+            'name'            => ['required', 'string', 'max:100'],
+            'icon'            => ['required', 'string', 'max:10'],
+            'class_id'        => ['nullable', 'integer'],
+            'type'            => ['required', 'string'],
+            'damage_type'     => ['nullable', 'string'],
+            'action_cost'     => ['required', 'integer', 'min:0'],
+            'value'           => ['required', 'integer', 'min:0'],
+            'level_required'  => ['required', 'integer', 'min:1'],
+            'description'     => ['required', 'string'],
+            'extra'           => ['nullable', 'string'],
+            'rarity'          => ['required', 'string', 'in:common,uncommon,rare,signature'],
+            'tier'            => ['required', 'integer', 'min:1', 'max:5'],
+            'default_copies'  => ['required', 'integer', 'min:1', 'max:4'],
         ]);
 
         if (!empty($validated['extra'])) {
@@ -100,17 +106,20 @@ class WildhuntSkillController extends Controller
         abort_if(!$record, 404);
 
         $validated = $request->validate([
-            'slug'           => ['required', 'string', 'max:100'],
-            'name'           => ['required', 'string', 'max:100'],
-            'icon'           => ['required', 'string', 'max:10'],
-            'class_id'       => ['nullable', 'integer'],
-            'type'           => ['required', 'string'],
-            'damage_type'    => ['nullable', 'string'],
-            'action_cost'    => ['required', 'integer', 'min:0'],
-            'value'          => ['required', 'integer', 'min:0'],
-            'level_required' => ['required', 'integer', 'min:1'],
-            'description'    => ['required', 'string'],
-            'extra'          => ['nullable', 'string'],
+            'slug'            => ['required', 'string', 'max:100'],
+            'name'            => ['required', 'string', 'max:100'],
+            'icon'            => ['required', 'string', 'max:10'],
+            'class_id'        => ['nullable', 'integer'],
+            'type'            => ['required', 'string'],
+            'damage_type'     => ['nullable', 'string'],
+            'action_cost'     => ['required', 'integer', 'min:0'],
+            'value'           => ['required', 'integer', 'min:0'],
+            'level_required'  => ['required', 'integer', 'min:1'],
+            'description'     => ['required', 'string'],
+            'extra'           => ['nullable', 'string'],
+            'rarity'          => ['required', 'string', 'in:common,uncommon,rare,signature'],
+            'tier'            => ['required', 'integer', 'min:1', 'max:5'],
+            'default_copies'  => ['required', 'integer', 'min:1', 'max:4'],
         ]);
 
         if (!empty($validated['extra'])) {

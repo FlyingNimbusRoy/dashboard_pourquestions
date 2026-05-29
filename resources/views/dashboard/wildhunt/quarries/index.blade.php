@@ -24,21 +24,47 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type slug</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tier</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min level</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type slug</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min Lv</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">MP only</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Boss</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unique drops</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Monsters</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                 @foreach($tierQuarries as $quarry)
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-3 font-medium text-gray-900">{{ $quarry->title }}</td>
-                        <td class="px-6 py-3 text-gray-500 font-mono text-xs">{{ $quarry->type }}</td>
-                        <td class="px-6 py-3 text-gray-500">{{ $quarry->tier }}</td>
-                        <td class="px-6 py-3 text-gray-500">{{ $quarry->min_player_level }}</td>
-                        <td class="px-6 py-3 flex gap-2 justify-end">
+                        <td class="px-4 py-3 font-medium text-gray-900">{{ $quarry->title }}</td>
+                        <td class="px-4 py-3 text-gray-500 font-mono text-xs">{{ $quarry->type }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $quarry->min_player_level }}</td>
+                        <td class="px-4 py-3">
+                            @if($quarry->multiplayer_only)
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">Yes</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500">
+                            @if($quarry->boss_monster_id)
+                                <span class="text-yellow-700">✦</span>
+                                @if($quarry->boss_monster_id_2)
+                                    <span class="text-yellow-700">✦</span> ×2
+                                @endif
+                            @else
+                                <span class="text-red-400 text-xs">none</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 space-x-1">
+                            @if($quarry->loot_pet_slug)
+                                <span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">🐾 pet</span>
+                            @endif
+                            @if($quarry->loot_gear_id)
+                                <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">⚔ gear</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-gray-500">{{ $quarry->monster_count }}</td>
+                        <td class="px-4 py-3 flex gap-2 justify-end">
                             <a href="{{ route('dashboard.wildhunt.quarries.edit', $quarry->id) }}"
                                class="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded text-xs font-semibold text-gray-900">Edit</a>
                             <a href="{{ route('dashboard.wildhunt.monsters.create', ['quarry_id' => $quarry->id]) }}"

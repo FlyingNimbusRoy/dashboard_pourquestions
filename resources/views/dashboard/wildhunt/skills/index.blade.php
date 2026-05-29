@@ -42,6 +42,12 @@
                     <option value="{{ $dt }}" {{ request('damage_type') === $dt ? 'selected' : '' }}>{{ $dt }}</option>
                 @endforeach
             </select>
+            <select name="rarity" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <option value="">All rarities</option>
+                @foreach(['common','uncommon','rare','signature'] as $r)
+                    <option value="{{ $r }}" {{ request('rarity') === $r ? 'selected' : '' }}>{{ ucfirst($r) }}</option>
+                @endforeach
+            </select>
             <button type="submit" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition">Filter</button>
             <a href="{{ route('dashboard.wildhunt.skills.index') }}" class="px-4 py-2 text-gray-500 text-sm rounded-lg hover:bg-gray-100 transition">Clear</a>
         </form>
@@ -58,6 +64,9 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lv req</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rarity</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tier</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Copies</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
                 </thead>
@@ -79,6 +88,17 @@
                         <td class="px-6 py-3 text-gray-500">{{ $skill->action_cost }}</td>
                         <td class="px-6 py-3 text-gray-500 font-semibold">{{ $skill->value }}</td>
                         <td class="px-6 py-3 text-gray-500">{{ $skill->level_required }}</td>
+                        <td class="px-6 py-3">
+                            <span class="px-2 py-0.5 rounded text-xs font-medium
+                                {{ $skill->rarity === 'signature' ? 'bg-yellow-100 text-yellow-800' :
+                                   ($skill->rarity === 'rare'      ? 'bg-purple-100 text-purple-800' :
+                                   ($skill->rarity === 'uncommon'  ? 'bg-blue-100 text-blue-800' :
+                                                                     'bg-gray-100 text-gray-600')) }}">
+                                {{ ucfirst($skill->rarity ?? 'common') }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-3 text-gray-500">{{ $skill->tier ?? '—' }}</td>
+                        <td class="px-6 py-3 text-gray-500">{{ $skill->default_copies ?? 1 }}</td>
                         <td class="px-6 py-3 flex gap-2">
                             <a href="{{ route('dashboard.wildhunt.skills.edit', $skill->id) }}"
                                class="bg-yellow-400 px-2 py-1 rounded text-blue-600 hover:bg-yellow-500">Edit</a>
@@ -90,7 +110,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="9" class="px-6 py-6 text-center text-gray-400">No skills found.</td></tr>
+                    <tr><td colspan="12" class="px-6 py-6 text-center text-gray-400">No skills found.</td></tr>
                 @endforelse
                 </tbody>
             </table>

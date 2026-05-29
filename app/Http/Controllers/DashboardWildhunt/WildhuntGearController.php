@@ -39,7 +39,7 @@ class WildhuntGearController extends Controller
 
         $classes  = $this->db()->table('classes')->orderBy('name')->get();
         $quarries = $this->db()->table('hunt_quarries')->orderBy('tier')->orderBy('title')->get();
-        $slots    = ['weapon', 'trinket', 'head', 'body'];
+        $slots    = ['weapon', 'armourset', 'headpiece', 'trinket'];
 
         return view('dashboard.wildhunt.gear.index', compact('gear', 'classes', 'quarries', 'slots'));
     }
@@ -63,7 +63,7 @@ class WildhuntGearController extends Controller
     {
         $validated = $request->validate([
             'name'                 => ['required', 'string', 'max:100'],
-            'slot'                 => ['required', 'string'],
+            'slot'                 => ['required', 'string', 'in:weapon,armourset,headpiece,trinket'],
             'description'          => ['required', 'string'],
             'class_id'             => ['nullable', 'integer'],
             'crest_cost'           => ['required', 'integer', 'min:0'],
@@ -147,7 +147,7 @@ class WildhuntGearController extends Controller
 
         $validated = $request->validate([
             'name'                 => ['required', 'string', 'max:100'],
-            'slot'                 => ['required', 'string'],
+            'slot'                 => ['required', 'string', 'in:weapon,armourset,headpiece,trinket'],
             'description'          => ['required', 'string'],
             'class_id'             => ['nullable', 'integer'],
             'crest_cost'           => ['required', 'integer', 'min:0'],

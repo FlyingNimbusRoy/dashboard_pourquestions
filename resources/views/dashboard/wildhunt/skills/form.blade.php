@@ -103,6 +103,41 @@
                            class="w-full border rounded py-2 px-3" required>
                 </div>
 
+                <!-- Rarity -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Rarity
+                        <span class="font-normal text-gray-400">(affects drop weight)</span></label>
+                    <select name="rarity" class="w-full border rounded py-2 px-3" required>
+                        @foreach(['common','uncommon','rare','signature'] as $r)
+                            <option value="{{ $r }}" {{ old('rarity', $skill->rarity ?? 'common') === $r ? 'selected' : '' }}>
+                                {{ ucfirst($r) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Tier -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Tier
+                        <span class="font-normal text-gray-400">(1–5 level bracket)</span></label>
+                    <select name="tier" class="w-full border rounded py-2 px-3" required>
+                        @foreach(range(1,5) as $t)
+                            <option value="{{ $t }}" {{ old('tier', $skill->tier ?? 1) == $t ? 'selected' : '' }}>
+                                {{ $t }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Default copies -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Default copies
+                        <span class="font-normal text-gray-400">(in starting deck)</span></label>
+                    <input type="number" name="default_copies"
+                           value="{{ old('default_copies', $skill->default_copies ?? 1) }}" min="1" max="4"
+                           class="w-full border rounded py-2 px-3" required>
+                </div>
+
                 <!-- Description -->
                 <div class="md:col-span-2">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
