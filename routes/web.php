@@ -16,6 +16,8 @@ use App\Http\Controllers\DashboardWildhunt\WildhuntMonsterController;
 use App\Http\Controllers\DashboardWildhunt\WildhuntSkillController;
 use App\Http\Controllers\DashboardWildhunt\WildhuntGearController;
 use App\Http\Controllers\DashboardWildhunt\WildhuntPetController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntChallengeController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntQuestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -116,6 +118,13 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
             // Pets
             Route::resource('pets', WildhuntPetController::class);
+
+            // Challenges
+            Route::resource('challenges', WildhuntChallengeController::class);
+            Route::post('challenges/{challenge}/duplicate', [WildhuntChallengeController::class, 'duplicate'])->name('challenges.duplicate');
+
+            // Quests
+            Route::resource('quests', WildhuntQuestController::class);
             Route::get('pets/{pet}/icons',                  [WildhuntPetController::class, 'icons'])->name('pets.icons');
             Route::post('pets/{pet}/icons',                 [WildhuntPetController::class, 'uploadIcon'])->name('pets.icons.upload');
             Route::get('pets/{pet}/icons/{filename}/preview',[WildhuntPetController::class, 'previewIcon'])->name('pets.icons.preview');
