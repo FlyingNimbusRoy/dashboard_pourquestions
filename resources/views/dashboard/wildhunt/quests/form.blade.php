@@ -155,6 +155,23 @@
                                     class="w-full py-2 text-sm text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 border border-dashed border-indigo-300 rounded-lg font-medium transition">
                                 + Add monster to this wave
                             </button>
+
+                            {{-- Story frame for this wave --}}
+                            <div class="mt-3 border-t border-gray-100 pt-3">
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" x-model="wave.story_before.enabled"
+                                           class="rounded border-gray-300">
+                                    <span class="text-xs font-semibold text-gray-600">Story frame before this wave</span>
+                                </label>
+                                <div x-show="wave.story_before.enabled" class="space-y-2 mt-2">
+                                    <input type="text" x-model="wave.story_before.title"
+                                           placeholder="Title (optional)"
+                                           class="w-full border border-gray-200 rounded-lg py-1.5 px-3 text-sm bg-white">
+                                    <textarea x-model="wave.story_before.text" rows="3"
+                                              placeholder="Story text shown to players before this wave begins…"
+                                              class="w-full border border-gray-200 rounded-lg py-1.5 px-3 text-sm bg-white resize-y"></textarea>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -256,17 +273,19 @@
                 init() {
                     _waveBuilder = this;
 
-                    // Normalise incoming data (handles both fresh and edited quests)
                     this.waves = (existing || []).map(w => ({
                         monsters: (w.monsters || []).map(m => ({
                             monster_id: String(m.monster_id || ''),
                             count: parseInt(m.count) || 1,
                         })),
+                        story_before: w.story_before
+                            ? { enabled: true, title: w.story_before.title || '', text: w.story_before.text || '' }
+                            : { enabled: false, title: '', text: '' },
                     }));
                 },
 
                 addWave() {
-                    this.waves.push({ monsters: [] });
+                    this.waves.push({ monsters: [], story_before: { enabled: false, title: '', text: '' } });
                 },
 
                 removeWave(i) {
@@ -312,6 +331,9 @@
                                     monster_id: parseInt(m.monster_id),
                                     count: m.count,
                                 })),
+                            story_before: (w.story_before?.enabled && w.story_before?.text)
+                                ? { title: w.story_before.title || null, text: w.story_before.text }
+                                : null,
                         }))
                     );
                 },
