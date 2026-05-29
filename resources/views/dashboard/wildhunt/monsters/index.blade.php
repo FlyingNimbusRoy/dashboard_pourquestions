@@ -33,6 +33,12 @@
             <option value="1" {{ request('is_boss') === '1' ? 'selected' : '' }}>Boss only</option>
             <option value="0" {{ request('is_boss') === '0' ? 'selected' : '' }}>Pool only</option>
         </select>
+        <select name="personality" class="border border-gray-300 rounded py-2 px-3 text-sm">
+            <option value="">All personalities</option>
+            @foreach($personalities as $p)
+                <option value="{{ $p }}" {{ request('personality') === $p ? 'selected' : '' }}>{{ ucfirst($p) }}</option>
+            @endforeach
+        </select>
         <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded text-sm">Filter</button>
         <a href="{{ route('dashboard.wildhunt.monsters.index') }}"
            class="bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold py-2 px-4 rounded text-sm">Clear</a>
@@ -42,45 +48,58 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
             <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icon</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quarry</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lv</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">HP</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Def</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exp</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Boss</th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icon</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quarry</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lv</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">HP</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Def</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Act</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Diff</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Personality</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phases</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exp</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Loot%</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Boss</th>
+                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
             @forelse($monsters as $m)
                 <tr class="hover:bg-gray-50 {{ $m->is_boss ? 'bg-yellow-50' : '' }}">
-                    <td class="px-6 py-3">
+                    <td class="px-4 py-3">
                         @if(str_ends_with($m->icon, '.png'))
                             <img src="{{ asset('wildhunt-icons/' . $m->icon) }}" class="w-8 h-8 object-contain">
                         @else
                             <span class="text-xl">{{ $m->icon }}</span>
                         @endif
                     </td>
-                    <td class="px-6 py-3 font-medium text-gray-900">{{ $m->name }}</td>
-                    <td class="px-6 py-3 text-gray-500 text-sm">
+                    <td class="px-4 py-3 font-medium text-gray-900">{{ $m->name }}</td>
+                    <td class="px-4 py-3 text-gray-500 text-sm">
                         @if($m->quarry_title)
                             <span class="text-gray-400">[T{{ $m->quarry_tier }}]</span> {{ $m->quarry_title }}
-                        @else
-                            —
+                        @else —
                         @endif
                     </td>
-                    <td class="px-6 py-3 text-gray-500">{{ $m->level }}</td>
-                    <td class="px-6 py-3 text-gray-500">{{ $m->hp }}</td>
-                    <td class="px-6 py-3 text-gray-500">{{ $m->defense }}</td>
-                    <td class="px-6 py-3 text-gray-500">{{ $m->exp_reward }}</td>
-                    <td class="px-6 py-3">
+                    <td class="px-4 py-3 text-gray-500">{{ $m->level }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ $m->hp }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ $m->defense }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ $m->max_actions ?? 1 }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ $m->difficulty ?? '—' }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">{{ $m->personality ?? 'default' }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        @if($m->phases && $m->phases !== 'null')
+                            <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-semibold">Yes</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-gray-500">{{ $m->exp_reward }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ $m->loot_chance ?? 0 }}%</td>
+                    <td class="px-4 py-3">
                         @if($m->is_boss)
                             <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold">Boss</span>
                         @endif
                     </td>
-                    <td class="px-6 py-3 flex gap-2 justify-end">
+                    <td class="px-4 py-3 flex gap-2 justify-end">
                         <a href="{{ route('dashboard.wildhunt.monsters.edit', $m->id) }}"
                            class="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded text-xs font-semibold text-gray-900">Edit</a>
                         <form method="POST" action="{{ route('dashboard.wildhunt.monsters.destroy', $m->id) }}"
@@ -93,7 +112,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" class="py-4 px-6 text-center text-gray-500">No monsters found.</td>
+                    <td colspan="14" class="py-4 px-6 text-center text-gray-500">No monsters found.</td>
                 </tr>
             @endforelse
             </tbody>

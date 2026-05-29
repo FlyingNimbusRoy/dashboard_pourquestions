@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardWildhunt\WildhuntQuarryController;
 use App\Http\Controllers\DashboardWildhunt\WildhuntMonsterController;
 use App\Http\Controllers\DashboardWildhunt\WildhuntSkillController;
 use App\Http\Controllers\DashboardWildhunt\WildhuntGearController;
+use App\Http\Controllers\DashboardWildhunt\WildhuntPetController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -112,6 +113,13 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
             // Gear
             Route::resource('gear', WildhuntGearController::class);
+
+            // Pets
+            Route::resource('pets', WildhuntPetController::class);
+            Route::get('pets/{pet}/icons',                  [WildhuntPetController::class, 'icons'])->name('pets.icons');
+            Route::post('pets/{pet}/icons',                 [WildhuntPetController::class, 'uploadIcon'])->name('pets.icons.upload');
+            Route::get('pets/{pet}/icons/{filename}/preview',[WildhuntPetController::class, 'previewIcon'])->name('pets.icons.preview');
+            Route::delete('pets/{pet}/icons/{filename}',    [WildhuntPetController::class, 'destroyIcon'])->name('pets.icons.destroy');
         });
     });
 });
