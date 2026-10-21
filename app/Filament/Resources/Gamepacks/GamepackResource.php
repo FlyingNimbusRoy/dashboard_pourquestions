@@ -45,7 +45,7 @@ class GamepackResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return app(GamepackService::class)->query()->withCount(['questions', 'characters', 'modifiers', 'purchases'])
+        return app(GamepackService::class)->query()->withCount(['questions', 'characters', 'modifiers', 'purchases', 'minigames'])
             ->addSelect([
                 'owners_count' => DB::table('gamepack_purchased')->selectRaw('count(distinct user_id)')->whereColumn('gamepack_id', 'gamepacks.id'),
                 'grants_count' => DB::table('gamepack_purchased')->selectRaw('count(distinct user_id)')->whereColumn('gamepack_id', 'gamepacks.id')->where('access_through_admin_grant', 1),
@@ -100,11 +100,14 @@ class GamepackResource extends Resource
                     ->description(fn (Gamepack $record): ?string => $record->grants_count ? "{$record->grants_count} via grant" : null),
                 TextColumn::make('purchases_count')->label('Purchases')->numeric()->sortable(),
                 TextColumn::make('questions_count')->label('Questions')->numeric()->sortable(),
+                TextColumn::make('minigames_count')->label('Minigames')->numeric()->sortable(),
                 TextColumn::make('pct_asked')->label('% asked')
                     ->state(fn (Gamepack $record): string => (app(QuestionUsage::class)->forGamepack($record->id)['pct'] ?? 0).'%')
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('characters_count')->label('Characters')->numeric()->sortable()->toggleable(),
-                TextColumn::make('modifiers_count')->label('Modifiers')->numeric()->sortable()->toggleable(),
+                TextColumn::make('characters_count')->label('Characters')->numeric()->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('modifiers_count')->label('Modifiers')->numeric()->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('category')->options(GamepackCategory::class),
