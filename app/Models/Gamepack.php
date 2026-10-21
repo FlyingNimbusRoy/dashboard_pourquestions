@@ -49,4 +49,10 @@ class Gamepack extends Model
     {
         return $this->hasMany(GamepackPurchase::class);
     }
+
+    /** @return HasMany<Minigame, $this> */
+    public function minigames(): HasMany
+    {
+        return $this->hasMany(Minigame::class);
+    }
 }

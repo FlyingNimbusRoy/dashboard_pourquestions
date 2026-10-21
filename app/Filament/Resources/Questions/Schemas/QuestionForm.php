@@ -106,9 +106,14 @@ class QuestionForm
                         ])
                         ->columns(4)
                         ->defaultItems(4)
-                        ->minItems(1)
+                        ->minItems(2)
+                        ->maxItems(4)
                         ->addActionLabel('Add answer')
                         ->rules([fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                            $count = count($value);
+                            if ($count !== 2 && $count !== 4) {
+                                $fail('A question must have exactly 2 or 4 answers.');
+                            }
                             if (! collect($value)->contains(fn ($answer) => (bool) ($answer['is_correct'] ?? false))) {
                                 $fail('Mark at least one answer as correct.');
                             }

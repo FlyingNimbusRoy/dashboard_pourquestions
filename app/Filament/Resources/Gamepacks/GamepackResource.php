@@ -54,7 +54,10 @@ class GamepackResource extends Resource
 
     public static function getRelations(): array
     {
-        return [RelationManagers\PurchasesRelationManager::class];
+        return [
+            RelationManagers\MinigamesRelationManager::class,
+            RelationManagers\PurchasesRelationManager::class,
+        ];
     }
 
     public static function form(Schema $schema): Schema
