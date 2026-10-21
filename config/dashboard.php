@@ -72,6 +72,7 @@ return [
             'questions', 'answers', 'question_similarities',
             'games', 'game_presets', 'setup_presets', 'gamepack_purchased',
             'booze_buddies', 'comments', 'user_achievements', 'user_gamestats',
+            'question_game_results', 'player_game_log',
         ],
         'chunk' => 1000,
         // Scratch database used by `dashboard:import-dump`, and the MariaDB root login used to create it.

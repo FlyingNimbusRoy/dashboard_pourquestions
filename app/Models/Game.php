@@ -46,4 +46,16 @@ class Game extends Model
     {
         return $this->hasMany(OnlineAction::class);
     }
+
+    /** @return HasMany<QuestionGameResult, $this> */
+    public function questionResults(): HasMany
+    {
+        return $this->hasMany(QuestionGameResult::class);
+    }
+
+    /** @return HasMany<PlayerGameLog, $this> */
+    public function playerLog(): HasMany
+    {
+        return $this->hasMany(PlayerGameLog::class);
+    }
 }

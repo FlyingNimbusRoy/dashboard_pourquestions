@@ -76,6 +76,12 @@ class Question extends Model
         return $this->hasMany(QuestionChange::class)->latest('id');
     }
 
+    /** @return HasMany<QuestionGameResult, $this> */
+    public function gameResults(): HasMany
+    {
+        return $this->hasMany(QuestionGameResult::class);
+    }
+
     /** Questions whose last review is older than the revalidation period (or never reviewed). */
     public function scopeValidationDue(Builder $query): Builder
     {

@@ -9494,6 +9494,24 @@ INSERT INTO `password_reset_tokens` (`email`, `token`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Tabelstructuur voor tabel `player_game_log`
+--
+
+CREATE TABLE `player_game_log` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `game_id` int(10) UNSIGNED DEFAULT NULL,
+  `shots` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `answered_correct` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `answered_wrong` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `won` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabelstructuur voor tabel `questions`
 --
 
@@ -11690,6 +11708,23 @@ INSERT INTO `questions` (`id`, `maker_id`, `vraag`, `trivia`, `is_random`, `is_n
 -- --------------------------------------------------------
 
 --
+-- Tabelstructuur voor tabel `question_game_results`
+--
+
+CREATE TABLE `question_game_results` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `question_id` int(10) UNSIGNED NOT NULL,
+  `game_id` int(10) UNSIGNED NOT NULL,
+  `answered_correct` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `answered_wrong` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `answered_timeout` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabelstructuur voor tabel `question_similarities`
 --
 
@@ -12098,6 +12133,14 @@ ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
+-- Indexen voor tabel `player_game_log`
+--
+ALTER TABLE `player_game_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `player_game_log_user_created_index` (`user_id`,`created_at`),
+  ADD KEY `player_game_log_game_id_foreign` (`game_id`);
+
+--
 -- Indexen voor tabel `questions`
 --
 ALTER TABLE `questions`
@@ -12105,6 +12148,14 @@ ALTER TABLE `questions`
   ADD KEY `questions_maker_id_foreign` (`maker_id`),
   ADD KEY `questions_category_id_foreign` (`category_id`),
   ADD KEY `questions_gamepack_id_foreign` (`gamepack_id`);
+
+--
+-- Indexen voor tabel `question_game_results`
+--
+ALTER TABLE `question_game_results`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_question_game` (`question_id`,`game_id`),
+  ADD KEY `question_game_results_game_id_foreign` (`game_id`);
 
 --
 -- Indexen voor tabel `question_similarities`
@@ -12246,10 +12297,22 @@ ALTER TABLE `online`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT voor een tabel `player_game_log`
+--
+ALTER TABLE `player_game_log`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT voor een tabel `questions`
 --
 ALTER TABLE `questions`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2251;
+
+--
+-- AUTO_INCREMENT voor een tabel `question_game_results`
+--
+ALTER TABLE `question_game_results`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT voor een tabel `question_similarities`
@@ -12309,6 +12372,20 @@ ALTER TABLE `game_presets`
 --
 ALTER TABLE `modifiers`
   ADD CONSTRAINT `modifiers_coupled_gamepack_id_foreign` FOREIGN KEY (`coupled_gamepack_id`) REFERENCES `gamepacks` (`id`) ON DELETE CASCADE;
+
+--
+-- Beperkingen voor tabel `player_game_log`
+--
+ALTER TABLE `player_game_log`
+  ADD CONSTRAINT `player_game_log_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `player_game_log_game_id_foreign` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE SET NULL;
+
+--
+-- Beperkingen voor tabel `question_game_results`
+--
+ALTER TABLE `question_game_results`
+  ADD CONSTRAINT `question_game_results_question_id_foreign` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `question_game_results_game_id_foreign` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE CASCADE;
 
 --
 -- Beperkingen voor tabel `question_similarities`
