@@ -95,15 +95,16 @@ class GamepackResource extends Resource
                 ColorColumn::make('color')->label(''),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('category')->badge()->sortable(),
-                TextColumn::make('price')->money('EUR')->sortable(),
+                TextColumn::make('price')->money('EUR')->sortable()->alignEnd(),
+                TextColumn::make('owners_count')->label('Owners')->numeric()->sortable()
+                    ->description(fn (Gamepack $record): ?string => $record->grants_count ? "{$record->grants_count} via grant" : null),
+                TextColumn::make('purchases_count')->label('Purchases')->numeric()->sortable(),
                 TextColumn::make('questions_count')->label('Questions')->numeric()->sortable(),
                 TextColumn::make('pct_asked')->label('% asked')
-                    ->state(fn (Gamepack $record): string => (app(QuestionUsage::class)->forGamepack($record->id)['pct'] ?? 0).'%'),
-                TextColumn::make('purchases_count')->label('Purchases')->numeric()->sortable(),
-                TextColumn::make('owners_count')->label('Owners')->numeric()->sortable()
-                    ->description(fn (Gamepack $record): ?string => $record->grants_count ? "{$record->grants_count} via admin grant" : null),
-                TextColumn::make('characters_count')->label('Characters')->numeric()->sortable(),
-                TextColumn::make('modifiers_count')->label('Modifiers')->numeric()->sortable(),
+                    ->state(fn (Gamepack $record): string => (app(QuestionUsage::class)->forGamepack($record->id)['pct'] ?? 0).'%')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('characters_count')->label('Characters')->numeric()->sortable()->toggleable(),
+                TextColumn::make('modifiers_count')->label('Modifiers')->numeric()->sortable()->toggleable(),
             ])
             ->filters([
                 SelectFilter::make('category')->options(GamepackCategory::class),

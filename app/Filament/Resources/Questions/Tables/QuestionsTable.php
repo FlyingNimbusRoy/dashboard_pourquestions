@@ -91,7 +91,7 @@ class QuestionsTable
                     ->state(fn (Question $record) => app(QuestionUsage::class)->timesAsked($record->id))
                     ->numeric()
                     ->alignEnd()
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(query: function (Builder $query, string $direction) {
                         $cases = collect(app(QuestionUsage::class)->counts())->map(fn ($n, $id) => 'when '.(int) $id.' then '.(int) $n)->implode(' ');
 
@@ -102,7 +102,7 @@ class QuestionsTable
                     ->formatStateUsing(fn (Question $record) => $record->wasEverValidated() ? $record->last_validated->diffForHumans() : 'Never')
                     ->color(fn (Question $record) => $record->isValidationDue() ? 'warning' : 'success')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
