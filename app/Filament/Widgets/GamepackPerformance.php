@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Gamepack;
+use App\Services\Insights\GamepackOwners;
 use App\Services\Insights\QuestionUsage;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
