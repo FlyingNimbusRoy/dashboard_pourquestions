@@ -7,7 +7,7 @@ use Filament\Widgets\Widget;
 
 class MonthlyQuotaWidget extends Widget
 {
-    protected static string $view = 'filament.widgets.monthly-quota';
+    protected string $view = 'filament.widgets.monthly-quota';
 
     protected static ?int $sort = 3;
 
