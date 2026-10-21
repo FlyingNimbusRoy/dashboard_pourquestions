@@ -57,12 +57,14 @@ class QuestionsTable
                 TextColumn::make('category.name')
                     ->label('Category')
                     ->badge()
-                    ->placeholder('None')
+                    ->placeholder('—')
                     ->sortable()
                     ->visible($showCategory),
                 TextColumn::make('gamepack.name')
                     ->label('Gamepack')
-                    ->placeholder('None')
+                    ->badge()
+                    ->placeholder('Base game')
+                    ->sortable()
                     ->toggleable(),
                 SelectColumn::make('difficulty')
                     ->options(QuestionForm::difficultyOptions())
@@ -74,11 +76,22 @@ class QuestionsTable
                         return (int) $state;
                     })
                     ->sortable(),
+                TextColumn::make('answers_count')
+                    ->label('Answers')
+                    ->state(fn (Question $record) => $record->answers->count())
+                    ->badge()
+                    ->color(fn (Question $record) => $record->answers->count() === 2 ? 'warning' : 'gray')
+                    ->alignCenter(),
+                IconColumn::make('is_nsfw')
+                    ->label('NSFW')
+                    ->boolean()
+                    ->toggleable(),
                 TextColumn::make('asks')
                     ->label('Asks')
                     ->state(fn (Question $record) => app(QuestionUsage::class)->timesAsked($record->id))
                     ->numeric()
                     ->alignEnd()
+                    ->toggleable()
                     ->sortable(query: function (Builder $query, string $direction) {
                         $cases = collect(app(QuestionUsage::class)->counts())->map(fn ($n, $id) => 'when '.(int) $id.' then '.(int) $n)->implode(' ');
 
@@ -88,11 +101,8 @@ class QuestionsTable
                     ->label('Validated')
                     ->formatStateUsing(fn (Question $record) => $record->wasEverValidated() ? $record->last_validated->diffForHumans() : 'Never')
                     ->color(fn (Question $record) => $record->isValidationDue() ? 'warning' : 'success')
-                    ->sortable(),
-                IconColumn::make('is_nsfw')
-                    ->label('NSFW')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
