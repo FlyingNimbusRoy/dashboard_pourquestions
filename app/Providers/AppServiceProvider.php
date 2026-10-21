@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Similarity\TextAnalyzer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Shared so its stem cache is reused across a whole similarity run.
+        $this->app->singleton(TextAnalyzer::class);
     }
 
     /**
@@ -19,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // The schema is shared with the live game: never allow migrate:fresh / db:wipe there.
+        DB::prohibitDestructiveCommands($this->app->isProduction());
     }
 }

@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Filament\Resources\Categories;
+
+use App\Filament\Resources\Categories\Pages\CreateCategory;
+use App\Filament\Resources\Categories\Pages\EditCategory;
+use App\Filament\Resources\Categories\Pages\ListCategories;
+use App\Filament\Resources\Categories\RelationManagers\QuestionsRelationManager;
+use App\Filament\Resources\Categories\Schemas\CategoryForm;
+use App\Filament\Resources\Categories\Tables\CategoriesTable;
+use App\Models\Category;
+use App\Services\Crud\CategoryService;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
+
+class CategoryResource extends Resource
+{
+    protected static ?string $model = Category::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Content';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function form(Schema $schema): Schema
+    {
+        return CategoryForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return CategoriesTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(CategoryService::class)->query()
+            ->withCount(['questions', 'questions as due_count' => fn (Builder $query) => $query->validationDue(), 'questions as valid_count' => fn (Builder $query) => $query->whereNot(fn (Builder $q) => $q->validationDue())])
+            ->withAvg('questions', 'difficulty');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            QuestionsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCategories::route('/'),
+            'create' => CreateCategory::route('/create'),
+            'edit' => EditCategory::route('/{record}/edit'),
+        ];
+    }
+}

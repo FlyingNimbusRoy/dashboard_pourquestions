@@ -18,12 +18,23 @@
         </include>
     </source>
     <php>
-        <env name="APP_ENV" value="testing"/>
+        <!-- Docker sets APP_ENV and DB_* as real variables ($_SERVER), which Laravel reads before $_ENV. -->
+        <server name="APP_ENV" value="testing" force="true"/>
+        <server name="DB_CONNECTION" value="mariadb" force="true"/>
+        <server name="DB_DATABASE" value="pourquestions_testing" force="true"/>
+        <server name="SOURCE_DB_HOST" value="source.invalid" force="true"/>
+        <env name="APP_ENV" value="testing" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="APP_KEY" value="base64:dGVzdGluZy1rZXktZm9yLXBocHVuaXQtb25seS0zMmI=" force="true"/>
+        <env name="DB_CONNECTION" value="mariadb" force="true"/>
+        <env name="DB_DATABASE" value="pourquestions_testing" force="true"/>
+        <!-- Tests must never reach the live database. -->
+        <env name="SOURCE_DB_HOST" value="source.invalid" force="true"/>
+        <env name="SOURCE_DB_PASSWORD" value="" force="true"/>
+        <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

@@ -1,24 +1,19 @@
 {
-    "$schema": "https://json.schemastore.org/package.json",
+    "$schema": "https://www.schemastore.org/package.json",
     "private": true,
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite",
-        "watch": "chokidar 'resources/js/**/*' 'resources/sass/**/*' 'resources/css/**/*' -c 'vite build'"
+        "dev": "vite"
     },
     "devDependencies": {
-        "@tailwindcss/forms": "^0.5.2",
-        "@tailwindcss/vite": "^4.0.0",
-        "alpinejs": "^3.4.2",
-        "autoprefixer": "^10.4.2",
-        "axios": "^1.11.0",
-        "chokidar-cli": "^3.0.0",
-        "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "^2.0.0",
-        "postcss": "^8.4.31",
-        "sass": "^1.92.1",
-        "tailwindcss": "^3.1.0",
-        "vite": "^7.0.4"
+        "@tailwindcss/vite": "^4.3.3",
+        "concurrently": "^10.0.3",
+        "laravel-vite-plugin": "^3.1",
+        "tailwindcss": "^4.3.3",
+        "vite": "^8.0.0"
+    },
+    "optionalDependencies": {
+        "@laravel/multiplex": "^0.4.1"
     }
 }

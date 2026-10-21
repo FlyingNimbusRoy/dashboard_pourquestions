@@ -1,11 +1,17 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('questions:check-similarities --limit=500')->dailyAt('03:00');
+// On shared hosting a single cron entry runs this: * * * * * php artisan schedule:run
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Quick incremental pass for new or edited questions; a weekly full pass re-calibrates
+// all scores as word frequencies across the question set change.
+Schedule::command('questions:detect-similar')->hourly()->withoutOverlapping();
+Schedule::command('questions:detect-similar --full')->weeklyOn(0, '03:00')->withoutOverlapping();
+
+// New review batch every Monday morning, unless reviewers still have enough open work.
+Schedule::command('reviews:create-batch --scheduled')->weeklyOn(1, '07:00');
+
+if (config('dashboard.queue_via_scheduler')) {
+    Schedule::command('queue:work --stop-when-empty --max-time=50')->everyMinute()->withoutOverlapping();
+}

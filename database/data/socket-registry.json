@@ -1,0 +1,299 @@
+{
+    "minigames": [
+        {
+            "key": "dice",
+            "name": "Dice",
+            "description": "Everyone rolls; the losers get High Tolerance (3 turns), a winner may get Low Tolerance.",
+            "sort": 1,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "wouldyourather",
+            "name": "Would You Rather",
+            "description": "Players vote on a dilemma; the minority drinks or gets a modifier.",
+            "sort": 2,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "wirecutter",
+            "name": "Wire Cutter",
+            "description": "Players cut wires; the wrong cut triggers shots and Trickster/Murderer/Dead modifiers.",
+            "sort": 3,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "cardsofmisery",
+            "name": "Cards of Misery",
+            "description": "Players vote on misery cards that hand out shots and modifiers. Forced in round 2.",
+            "sort": 4,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": false,
+                "fixed_round": 2,
+                "weight": 5
+            }
+        },
+        {
+            "key": "misfortune",
+            "name": "Wheel of Misfortune",
+            "description": "A wheel decides: take shots or receive a modifier.",
+            "sort": 5,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "liar",
+            "name": "Liar",
+            "description": "Players bluff on a topic; the caught liar gets High Tolerance. Never in round 1.",
+            "sort": 6,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": false,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "spitthis",
+            "name": "Spit This",
+            "description": "Players act out words for the group.",
+            "sort": 7,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "buildcocktail",
+            "name": "Build Cocktail",
+            "description": "Players build a cocktail from the right ingredients.",
+            "sort": 8,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        },
+        {
+            "key": "beerburglar",
+            "name": "Beer Burglar",
+            "description": "A bully steals beer; victims get Bullied (3 turns), the bully Splitting Headache (2 turns).",
+            "sort": 9,
+            "min_players": null,
+            "max_players": null,
+            "settings": {
+                "allowed_in_round_1": true,
+                "fixed_round": null,
+                "weight": 5
+            }
+        }
+    ],
+    "modifiers": [
+        {
+            "key": "FRIENEMIES",
+            "name": "Frienemies",
+            "description": "When your frienemy answers correctly, you have to drink! And vice versa.",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "DRINKINGBUDDIES",
+            "name": "Drinking Buddies",
+            "description": "When your buddy drinks, you drink too!",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "NOPRESSURE",
+            "name": "No Pressure",
+            "description": "The next question you answer wrong, everyone else drinks.",
+            "turnbased": true,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "TRICKSTER",
+            "name": "Trickster",
+            "description": "Next wrong answer moves the shot to another player.",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "HIGHTOLERANCE",
+            "name": "High Tolerance",
+            "description": "Everytime you have to take 1 shot, take 2 instead.",
+            "turnbased": true,
+            "settings": {
+                "duration": 3,
+                "shot_multiplier": 2,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "LOWTOLERANCE",
+            "name": "Low Tolerance",
+            "description": "Skip the next shot you would have to take.",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "MURDERER",
+            "name": "Murderer",
+            "description": "You blew up your group of friends. Will the guilt end you?",
+            "turnbased": true,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "DEAD",
+            "name": "Dead",
+            "description": "If you answer correctly, your murderer has to take a shot.",
+            "turnbased": true,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "BRAVE",
+            "name": "Brave",
+            "description": "Each time you get asked a question, get asked an extra question!",
+            "turnbased": true,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "COWARD",
+            "name": "Coward",
+            "description": "No question for you. Coward.",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "INDECISIVE",
+            "name": "Indecisive",
+            "description": "Removing half the answers for you!",
+            "turnbased": true,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "LUCKY",
+            "name": "Lucky",
+            "description": "You might get lucky at the next Minigame...",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "UNLUCKY",
+            "name": "Unlucky",
+            "description": "You might get unlucky at the next Minigame...",
+            "turnbased": false,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "SPEEDRUN",
+            "name": "Speedrun",
+            "description": "Answer the next questions really fast.",
+            "turnbased": true,
+            "settings": {
+                "duration": 1,
+                "shot_multiplier": null,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "BULLIED",
+            "name": "Bullied",
+            "description": "The bully got you. Take double shots for 3 turns, and one answer is blurred out.",
+            "turnbased": true,
+            "settings": {
+                "duration": 3,
+                "shot_multiplier": 2,
+                "extra_shots": null
+            }
+        },
+        {
+            "key": "SPLITTINGHEADACHE",
+            "name": "Splitting Headache",
+            "description": "Beer hit hard. Double shots for 2 turns, and two answers are blurred out.",
+            "turnbased": true,
+            "settings": {
+                "duration": 2,
+                "shot_multiplier": 2,
+                "extra_shots": null
+            }
+        }
+    ]
+}

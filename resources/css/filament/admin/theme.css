@@ -1,0 +1,132 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* ===== Pour Questions: a light, professional staff tool with a hint of the game =====
+   Off-white ground with a faint lilac tint, white surfaces, the game's purple as accent,
+   its display font for the brand and page titles only. */
+:root {
+    --pq-bg: #f8f6fc;
+    --pq-card: #ffffff;
+    --pq-border: #e9e2f5;
+    --pq-text: #1f1430;
+    --pq-muted: #5b4b72;
+    --pq-purple: #7c3aed;
+    --pq-lilac: #c084fc;
+    --pq-ink: #100420;
+    --pq-display: 'Anton', 'Impact', sans-serif;
+}
+
+body {
+    background-color: var(--pq-bg);
+    background-image: linear-gradient(160deg, #f3eefc, #f8f6fc 40%, #fbfafd);
+    background-attachment: fixed;
+    color: var(--pq-text);
+}
+
+/* a few faint lilac bubbles rising in the background, a nod to the game (markup: views/filament/bubbles.blade.php) */
+.pq-bubbles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.pq-bubble {
+    position: absolute;
+    bottom: -200px;
+    border-radius: 50%;
+    border: 1px solid rgba(168, 85, 247, 0.25) !important;
+    background: rgba(192, 132, 252, 0.10) !important;
+    box-sizing: border-box;
+    will-change: transform;
+    animation: pq-rise linear infinite;
+}
+@keyframes pq-rise {
+    0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
+    10% { opacity: 0.6; }
+    50% { transform: translate(14px, -62vh) scale(1); }
+    90% { opacity: 0.6; }
+    100% { transform: translate(-10px, -125vh) scale(1.05); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pq-bubbles { display: none; }
+}
+.fi-layout, .fi-main-ctn, .fi-simple-layout { position: relative; z-index: 1; }
+
+/* page titles in the game's display face */
+.fi-header-heading,
+.fi-simple-header-heading {
+    font-family: var(--pq-display) !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--pq-text);
+}
+
+/* surfaces
+   Filament already gives these containers padding, radius and a white background; we only retint the
+   frame and shadow (lilac), and only on TOP-LEVEL containers. Anything nested inside another surface
+   (a table in a section, a section in a modal, ...) gets no frame or shadow at all,
+   so we never get boxes within boxes. */
+.fi-section:not(.fi-section-not-contained),
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-modal-window,
+.fi-simple-main,
+.fi-dropdown-panel {
+    border-radius: 0.75rem;
+    box-shadow: 0 0 0 1px var(--pq-border), 0 1px 2px rgba(31, 20, 48, 0.04), 0 4px 14px rgba(124, 58, 237, 0.05) !important;
+}
+:is(.fi-section, .fi-ta-ctn, .fi-modal-window) :is(.fi-section:not(.fi-section-not-contained), .fi-ta-ctn) {
+    box-shadow: none !important;
+}
+/* wrappers without a background of their own never get a frame (incl. "not contained" sections) */
+.fi-section-not-contained, .fi-section-not-contained > .fi-section-header, .fi-grid-col, .fi-sc-component { box-shadow: none !important; border: 0 !important; background: transparent; --tw-ring-shadow: 0 0 #0000; }
+.fi-wi, .fi-wi-chart, .fi-wi-table, .fi-wi-stats-overview, .fi-section-content-ctn, .fi-section-content,
+.fi-ta-content-ctn, .fi-ta-content, .fi-page-content, .fi-resource-relation-manager, .fi-main {
+    box-shadow: none !important;
+    border-color: transparent;
+    --tw-ring-shadow: 0 0 #0000;
+}
+
+/* tables: keep Filament's own padding and structure, add a lilac header and hover */
+.fi-ta-table thead tr { background-color: #faf8fe; }
+.fi-ta-table tbody > tr + tr { border-top: 1px solid #efe9f8; }
+.fi-ta-table tbody > tr:not(.fi-ta-group-header-row):hover { background-color: #f6f1fd; }
+.fi-ta-ctn .fi-ta-header,
+.fi-ta-ctn .fi-ta-header-toolbar,
+.fi-ta-ctn .fi-ta-filters-above-content-ctn,
+.fi-ta-ctn .fi-ta-table thead { border-color: #efe9f8; }
+
+/* hand-written tables inside insight sections (views/filament/pages/insights) */
+.fi-section-content table.w-full { border-collapse: collapse; }
+.fi-section-content table.w-full :is(th, td) { padding: 0.5rem 0.75rem; vertical-align: middle; }
+.fi-section-content table.w-full :is(th, td):first-child { padding-inline-start: 0; }
+.fi-section-content table.w-full :is(th, td):last-child { padding-inline-end: 0; }
+.fi-section-content table.w-full th { font-weight: 600; font-size: 0.8125rem; border-bottom: 1px solid var(--pq-border); }
+
+/* sidebar + topbar */
+.fi-sidebar, .fi-sidebar-header, .fi-topbar, .fi-topbar-ctn {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-color: var(--pq-border) !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+}
+.fi-sidebar { border-right: 1px solid var(--pq-border); }
+.fi-topbar { border-bottom: 1px solid var(--pq-border); }
+.fi-sidebar-item-btn:hover { background: #f4eefc !important; }
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn { background: #efe5fd !important; }
+.fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active .fi-icon { color: var(--pq-purple) !important; }
+
+/* inputs */
+.fi-input-wrp:focus-within { --tw-ring-color: var(--pq-purple) !important; }
+
+/* brand: the game's logo treatment, the one playful element kept */
+.pq-brand { display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--pq-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 1.3rem; line-height: 1; color: var(--pq-text); }
+.pq-brand-pill { display: inline-block; background: var(--pq-lilac); color: var(--pq-ink); padding: 0.16em 0.4em; border-radius: 0.16em; transform: rotate(-2deg); }
+
+/* footer tagline */
+.pq-footer { text-align: center; padding: 1.25rem 1rem; font-size: 0.75rem; color: var(--pq-muted); position: relative; z-index: 1; }

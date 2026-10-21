@@ -2,39 +2,50 @@
 
 namespace App\Models;
 
+use App\Services\LiveSync\RecordsLiveChanges;
+use App\Enums\AchievementCriteria;
+use Database\Factories\AchievementFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Fillable(['name', 'description', 'image', 'criteria_type', 'criteria_value', 'exact_match', 'character_id', 'available_from', 'available_until'])]
 class Achievement extends Model
 {
+    use RecordsLiveChanges;
+
+    /** @use HasFactory<AchievementFactory> */
     use HasFactory;
 
-    protected $table = 'achievements';
-
-    protected $fillable = [
-        'name',
-        'description',
-        'image',
-        'criteria_type',
-        'criteria_value',
-    ];
-
-    const CRITERIA_TYPES = [
-        'games_played'  => 'Games Played',
-        'games_won'     => 'Games Won',
-        'total_shots'   => 'Total Shots',
-        'shot_highscore' => 'Shot Highscore',
-    ];
-
-    public function getCriteriaLabelAttribute(): string
+    protected function casts(): array
     {
-        return self::CRITERIA_TYPES[$this->criteria_type] ?? ucfirst($this->criteria_type);
+        return [
+            'criteria_type' => AchievementCriteria::class,
+            'criteria_value' => 'integer',
+            'exact_match' => 'boolean',
+            'available_from' => 'datetime',
+            'available_until' => 'datetime',
+        ];
     }
 
-    public function users()
+    /** @return BelongsTo<Character, $this> */
+    public function character(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'user_achievements')
-            ->withPivot('unlocked_at')
-            ->withTimestamps();
+        return $this->belongsTo(Character::class);
+    }
+
+    /** @return HasMany<UserAchievement, $this> */
+    public function unlocks(): HasMany
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_achievements')->withPivot('unlocked_at')->withTimestamps();
     }
 }

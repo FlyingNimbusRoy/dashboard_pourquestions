@@ -2,39 +2,51 @@
 
 namespace App\Models;
 
+use App\Services\LiveSync\RecordsLiveChanges;
+use App\Enums\GamepackCategory;
+use Database\Factories\GamepackFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Fillable(['name', 'category', 'description', 'icon', 'color', 'price', 'url_coverart', 'flavor_text'])]
 class Gamepack extends Model
 {
+    use RecordsLiveChanges;
+
+    /** @use HasFactory<GamepackFactory> */
     use HasFactory;
 
-    protected $table = 'gamepacks';
-
-    protected $fillable = [
-        'name',
-        'category',
-        'flavor_text',
-        'description',
-        'icon',
-        'color',
-        'price',
-        'url_coverart',
-    ];
-
-    const CATEGORIES = [
-        'gamepack'     => 'Game Pack',
-        'questionpack' => 'Question Pack',
-        'skinpack'     => 'Skin Pack',
-    ];
-
-    public function getCategoryLabelAttribute(): string
+    protected function casts(): array
     {
-        return self::CATEGORIES[$this->category] ?? ucfirst($this->category);
+        return [
+            'category' => GamepackCategory::class,
+            'price' => 'decimal:2',
+        ];
     }
 
-    public function modifiers()
+    /** @return HasMany<Question, $this> */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class);
+    }
+
+    /** @return HasMany<Character, $this> */
+    public function characters(): HasMany
+    {
+        return $this->hasMany(Character::class);
+    }
+
+    /** @return HasMany<Modifier, $this> */
+    public function modifiers(): HasMany
     {
         return $this->hasMany(Modifier::class, 'coupled_gamepack_id');
+    }
+
+    /** @return HasMany<GamepackPurchase, $this> */
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(GamepackPurchase::class);
     }
 }
