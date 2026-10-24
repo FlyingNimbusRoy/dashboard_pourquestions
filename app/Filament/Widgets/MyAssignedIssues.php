@@ -26,14 +26,14 @@ class MyAssignedIssues extends TableWidget
                 ->orderBy('created_at'))
             ->columns([
                 TextColumn::make('type')->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'content' => 'info',
                         'balance' => 'warning',
                         'tech'    => 'danger',
                         default   => 'gray',
                     }),
                 TextColumn::make('status')->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'assigned'    => 'info',
                         'in_progress' => 'primary',
                         default       => 'gray',

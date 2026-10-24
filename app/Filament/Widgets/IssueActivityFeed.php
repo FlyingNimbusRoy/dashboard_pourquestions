@@ -23,7 +23,7 @@ class IssueActivityFeed extends TableWidget
             ->columns([
                 TextColumn::make('created_at')->label('When')->since(),
                 TextColumn::make('action')->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'reopened' => 'warning',
                         'resolved' => 'success',
                         'wont_fix' => 'gray',

@@ -40,7 +40,7 @@ class SupportMessageResource extends Resource
             ->columns([
                 TextColumn::make('type')
                     ->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'bug'      => 'danger',
                         'feedback' => 'info',
                         'support'  => 'warning',
@@ -48,7 +48,7 @@ class SupportMessageResource extends Resource
                     }),
                 TextColumn::make('status')
                     ->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'new'         => 'warning',
                         'in_progress' => 'primary',
                         'waiting'     => 'info',

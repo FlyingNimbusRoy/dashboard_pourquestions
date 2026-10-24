@@ -78,7 +78,7 @@ class FeatureToggleResource extends Resource
             ->columns([
                 TextColumn::make('type')
                     ->badge()
-                    ->colorUsing(fn (string $state) => match ($state) {
+                    ->color(fn (string $state) => match ($state) {
                         'minigame' => 'info',
                         'modifier' => 'warning',
                         default    => 'gray',

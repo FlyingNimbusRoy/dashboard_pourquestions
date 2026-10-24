@@ -77,7 +77,7 @@ class AnnouncementResource extends Resource
             ->columns([
                 TextColumn::make('type')
                     ->badge()
-                    ->colorUsing(fn (string $state) => match ($state) {
+                    ->color(fn (string $state) => match ($state) {
                         'info'        => 'info',
                         'warning'     => 'warning',
                         'maintenance' => 'danger',

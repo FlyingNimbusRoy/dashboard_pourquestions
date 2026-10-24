@@ -38,7 +38,7 @@ class IssueResource extends Resource
             ->columns([
                 TextColumn::make('type')
                     ->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'content' => 'info',
                         'balance' => 'warning',
                         'tech' => 'danger',
@@ -54,7 +54,7 @@ class IssueResource extends Resource
                     ->wrap(),
                 TextColumn::make('status')
                     ->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'open' => 'warning',
                         'assigned' => 'info',
                         'in_progress' => 'primary',

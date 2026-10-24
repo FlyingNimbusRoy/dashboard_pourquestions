@@ -27,13 +27,13 @@ class MySupportMessages extends TableWidget
                 ->orderBy('created_at'))
             ->columns([
                 TextColumn::make('type')->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'bug'      => 'danger',
                         'feedback' => 'info',
                         default    => 'warning',
                     }),
                 TextColumn::make('status')->badge()
-                    ->colorUsing(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'in_progress' => 'primary',
                         'waiting'     => 'info',
                         default       => 'gray',
