@@ -13,6 +13,8 @@ class GamesInsightsPage extends Page
 {
     protected string $view = 'filament.pages.insights.games-insights';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
 
     protected static string|UnitEnum|null $navigationGroup = 'Insights';

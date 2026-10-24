@@ -49,7 +49,22 @@
                 <tbody>
                     @foreach ($data['contributors'] as $contributor)
                         <tr class="border-t" style="border-color:rgba(124,58,237,0.10)">
-                            <td class="py-1.5">{{ $contributor->name }}</td>
+                            <td class="py-1.5">
+                                <span>{{ $contributor->name }}</span>
+                                @if ($contributor->current_streak >= 3)
+                                    <span class="ml-1.5 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-semibold"
+                                          style="background:rgba(251,191,36,0.15);color:#d97706"
+                                          title="🔥 {{ $contributor->current_streak }}-day streak this month">
+                                        🔥 {{ $contributor->current_streak }}d
+                                    </span>
+                                @elseif ($contributor->best_streak >= 3)
+                                    <span class="ml-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-xs"
+                                          style="background:rgba(124,58,237,0.08);color:#57466e"
+                                          title="Best streak this month: {{ $contributor->best_streak }} days">
+                                        best {{ $contributor->best_streak }}d
+                                    </span>
+                                @endif
+                            </td>
                             <td class="py-1.5 text-right font-semibold">{{ $contributor->month_count }}</td>
                             <td class="py-1.5 text-right" style="color:#57466e">{{ number_format($contributor->total_count) }}</td>
                         </tr>

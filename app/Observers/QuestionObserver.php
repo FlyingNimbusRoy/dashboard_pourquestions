@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Gamepack;
 use App\Models\Question;
 use App\Models\QuestionChange;
+use Illuminate\Support\Facades\DB;
 
 class QuestionObserver
 {
@@ -30,6 +31,12 @@ class QuestionObserver
 
         if ($changes !== []) {
             self::log($question->id, 'updated', $changes);
+        }
+
+        // Bump analytics version when question content changes so historical stats
+        // can be grouped by content era in dash_game_question_results.
+        if (array_intersect(array_keys($question->getChanges()), ['vraag', 'trivia', 'difficulty']) !== []) {
+            DB::table('questions')->where('id', $question->id)->increment('version');
         }
     }
 

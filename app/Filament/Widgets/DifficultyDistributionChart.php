@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\Question;
 use Filament\Widgets\ChartWidget;
 
-/** Single-series magnitude chart: number of questions per difficulty level. */
+/** % of question bank per difficulty — same 0-100 scale as DifficultyUsageChart for side-by-side comparison (D10). */
 class DifficultyDistributionChart extends ChartWidget
 {
     protected static ?int $sort = 5;
 
-    protected ?string $heading = 'Questions in bank per difficulty';
+    protected ?string $heading = 'Bank share per difficulty';
+
+    protected ?string $description = '% of all questions at each level';
 
     protected ?string $maxHeight = '280px';
 
@@ -29,12 +31,13 @@ class DifficultyDistributionChart extends ChartWidget
     {
         $levels = range((int) config('dashboard.difficulty.min'), (int) config('dashboard.difficulty.max'));
         $counts = Question::query()->selectRaw('difficulty, count(*) as total')->groupBy('difficulty')->pluck('total', 'difficulty');
+        $total  = (int) $counts->sum();
 
         return [
             'labels' => array_map('strval', $levels),
             'datasets' => [[
-                'label' => 'Questions',
-                'data' => array_map(fn (int $level) => (int) $counts->get($level, 0), $levels),
+                'label' => '% of bank',
+                'data' => array_map(fn (int $level) => $total > 0 ? round($counts->get($level, 0) / $total * 100, 1) : 0, $levels),
                 'backgroundColor' => '#a855f7',
                 'borderRadius' => 4,
                 'borderSkipped' => 'start',
@@ -49,7 +52,7 @@ class DifficultyDistributionChart extends ChartWidget
             'plugins' => ['legend' => ['display' => false]],
             'scales' => [
                 'x' => ['grid' => ['display' => false], 'ticks' => ['color' => '#57466e']],
-                'y' => ['grid' => ['color' => 'rgba(124,58,237,0.10)'], 'ticks' => ['precision' => 0, 'color' => '#57466e'], 'beginAtZero' => true],
+                'y' => ['max' => 100, 'beginAtZero' => true, 'grid' => ['color' => 'rgba(124,58,237,0.10)'], 'ticks' => ['color' => '#57466e']],
             ],
         ];
     }

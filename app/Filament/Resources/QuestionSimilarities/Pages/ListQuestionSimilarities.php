@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\QuestionSimilarities\Pages;
 
 use App\Enums\SimilarityStatus;
+use App\Filament\Resources\QuestionSimilarities\Pages\CompareQuestions;
 use App\Filament\Resources\QuestionSimilarities\QuestionSimilarityResource;
 use App\Jobs\DetectSimilarQuestionsJob;
 use App\Models\QuestionSimilarity;
@@ -42,7 +43,14 @@ class ListQuestionSimilarities extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        $open = QuestionSimilarity::where('status', SimilarityStatus::Open)->count();
+
         return [
+            Action::make('compare')
+                ->label('Compare one by one')
+                ->icon(Heroicon::OutlinedArrowsRightLeft)
+                ->visible($open > 0)
+                ->url(QuestionSimilarityResource::getUrl('compare')),
             Action::make('detect')
                 ->label('Run check now')
                 ->icon(Heroicon::OutlinedArrowPath)

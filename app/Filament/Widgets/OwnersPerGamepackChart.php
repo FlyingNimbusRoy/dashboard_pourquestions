@@ -10,6 +10,8 @@ class OwnersPerGamepackChart extends ChartWidget
 {
     use InsightChart;
 
+    protected static bool $isDiscovered = false;
+
     protected static ?int $sort = 10;
 
     protected ?string $heading = 'Owners per gamepack';

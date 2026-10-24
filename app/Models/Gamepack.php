@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use App\Enums\GamepackCategory;
 use Database\Factories\GamepackFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -13,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name', 'category', 'description', 'icon', 'color', 'price', 'url_coverart', 'flavor_text'])]
 class Gamepack extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<GamepackFactory> */
     use HasFactory;

@@ -8,6 +8,7 @@ use App\Filament\Pages\Review;
 use App\Filament\Resources\Games\GameResource;
 use App\Filament\Resources\Questions\QuestionResource;
 use App\Filament\Resources\Questions\Support\ServiceDelete;
+use App\Models\DashIssue;
 use App\Models\Question;
 use App\Models\QuestionReview;
 use App\Models\QuestionSimilarity;
@@ -128,6 +129,10 @@ class EditQuestion extends EditRecord
                 ->where(fn ($q) => $q->where('question_id', $question->id)->orWhere('similar_question_id', $question->id))
                 ->count(),
             'openDenials' => $this->openDenial() !== null ? 1 : 0,
+            'openIssues' => DashIssue::where('subject_type', 'question')
+                ->where('subject_id', $question->id)
+                ->whereIn('status', ['open', 'assigned', 'in_progress'])
+                ->count(),
             'lastChange' => $question->changes()->first(),
         ];
     }

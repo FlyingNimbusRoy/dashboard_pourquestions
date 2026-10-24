@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use App\Enums\AchievementCriteria;
 use Database\Factories\AchievementFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -15,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name', 'description', 'image', 'criteria_type', 'criteria_value', 'exact_match', 'character_id', 'available_from', 'available_until'])]
 class Achievement extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<AchievementFactory> */
     use HasFactory;

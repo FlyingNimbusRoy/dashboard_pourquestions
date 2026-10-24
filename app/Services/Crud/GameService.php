@@ -3,7 +3,6 @@
 namespace App\Services\Crud;
 
 use App\Models\Game;
-use App\Models\PendingLiveChange;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -67,7 +66,7 @@ class GameService extends CrudService
         return $this->staleQuery()->count();
     }
 
-    /** Set is_finished (flag only) and queue the same change for the live database. Returns changed rows. */
+    /** Set is_finished (flag only). Returns changed rows. Returns changed rows. */
     public function markFinished(iterable $games, ?int $userId = null): int
     {
         return $this->setFlag($games, 'is_finished', $userId);

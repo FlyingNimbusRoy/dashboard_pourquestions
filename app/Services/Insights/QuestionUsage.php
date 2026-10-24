@@ -96,6 +96,15 @@ class QuestionUsage
         return $this->data()['orphans'];
     }
 
+    /**
+     * Question ids whose ask count meets or exceeds $threshold.
+     * @return list<int>
+     */
+    public function retirementCandidateIds(int $threshold): array
+    {
+        return array_values(array_keys(array_filter($this->counts(), fn ($n) => $n >= $threshold)));
+    }
+
     /** @return list<array{id:int, asks:int}> */
     public function top(int $n = 25): array
     {

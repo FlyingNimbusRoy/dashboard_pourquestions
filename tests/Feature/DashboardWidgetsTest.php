@@ -43,7 +43,7 @@ class DashboardWidgetsTest extends TestCase
         $batch = ReviewBatch::create(['name' => 'Batch A', 'reviewer_id' => $this->admin->id, 'due_at' => now()->addDay()]);
         $this->review($batch, Question::factory()->create(), ReviewOutcome::Approved, now());
 
-        $this->get('/admin')->assertOk()->assertSee('Batch A')->assertSee('Questions reviewed per week');
+        $this->get('/admin')->assertOk()->assertSee('Batch A');
     }
 
     public function test_validation_progress_counts_per_week_and_excludes_skipped(): void
@@ -71,8 +71,9 @@ class DashboardWidgetsTest extends TestCase
         $component = Livewire::test(DifficultyDistributionChart::class)->instance();
         $data = (new \ReflectionMethod($component, 'getData'))->invoke($component);
 
+        // Chart shows % of bank per difficulty (3 questions: 2×d1, 1×d5)
         $this->assertSame(['1', '2', '3', '4', '5'], $data['labels']);
-        $this->assertSame([2, 0, 0, 0, 1], $data['datasets'][0]['data']);
+        $this->assertSame([66.7, 0.0, 0.0, 0.0, 33.3], $data['datasets'][0]['data']);
     }
 
     public function test_my_open_reviews_lists_own_and_unassigned_open_batches_only(): void

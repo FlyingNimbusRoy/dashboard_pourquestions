@@ -15,3 +15,7 @@ Schedule::command('reviews:create-batch --scheduled')->weeklyOn(1, '07:00');
 if (config('dashboard.queue_via_scheduler')) {
     Schedule::command('queue:work --stop-when-empty --max-time=50')->everyMinute()->withoutOverlapping();
 }
+
+// Analytics pipeline: rollup first, then threshold check (depends on session data being fresh).
+Schedule::command('analytics:rollup-daily')->dailyAt('02:00')->withoutOverlapping();
+Schedule::command('analytics:check-thresholds')->dailyAt('02:30')->withoutOverlapping();

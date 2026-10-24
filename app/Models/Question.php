@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use App\Observers\QuestionObserver;
 use Database\Factories\QuestionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[ObservedBy(QuestionObserver::class)]
 class Question extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<QuestionFactory> */
     use HasFactory;

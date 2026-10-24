@@ -10,6 +10,8 @@ use Filament\Widgets\TableWidget;
 
 class LatestGames extends TableWidget
 {
+    protected static bool $isDiscovered = false;
+
     protected static ?int $sort = 9;
 
     protected static ?string $heading = 'Latest games';

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\QuestionSimilarities;
 
 use Illuminate\Support\Facades\Cache;
 use App\Enums\SimilarityStatus;
+use App\Filament\Resources\QuestionSimilarities\Pages\CompareQuestions;
 use App\Filament\Resources\QuestionSimilarities\Pages\ListQuestionSimilarities;
 use App\Filament\Resources\QuestionSimilarities\Tables\QuestionSimilaritiesTable;
 use App\Models\QuestionSimilarity;
@@ -48,6 +49,7 @@ class QuestionSimilarityResource extends Resource
     {
         return [
             'index' => ListQuestionSimilarities::route('/'),
+            'compare' => CompareQuestions::route('/compare'),
         ];
     }
 }

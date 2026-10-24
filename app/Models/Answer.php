@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use App\Observers\AnswerObserver;
 use Database\Factories\AnswerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -18,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Touches('question')]
 class Answer extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<AnswerFactory> */
     use HasFactory;

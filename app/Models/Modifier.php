@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Casts\GameEffects;
-use App\Services\LiveSync\RecordsLiveChanges;
 use Database\Factories\ModifierFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 #[Fillable(['name', 'description', 'icon', 'turnbased', 'effects', 'coupled_gamepack_id', 'is_active'])]
 class Modifier extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<ModifierFactory> */
     use HasFactory;

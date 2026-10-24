@@ -20,6 +20,8 @@ class QuestionUsagePage extends Page implements HasTable
 
     protected string $view = 'filament.pages.insights.question-usage';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
     protected static string|UnitEnum|null $navigationGroup = 'Insights';

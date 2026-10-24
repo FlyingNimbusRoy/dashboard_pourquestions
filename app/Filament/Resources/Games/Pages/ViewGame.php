@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Games\Pages;
 
 use App\Filament\Resources\Games\GameResource;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Actions\EditAction;
 
 class ViewGame extends ViewRecord
 {
@@ -12,6 +11,6 @@ class ViewGame extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [EditAction::make()];
+        return [];
     }
 }

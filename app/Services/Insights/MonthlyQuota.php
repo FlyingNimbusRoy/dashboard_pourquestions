@@ -5,6 +5,7 @@ namespace App\Services\Insights;
 use App\Models\Question;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class MonthlyQuota
 {
@@ -40,6 +41,8 @@ class MonthlyQuota
         $remaining = max(0, $target - $total);
         $neededPerDay = $daysLeft > 0 ? (int) ceil($remaining / $daysLeft) : 0;
 
+        $streaks = $this->streaks($start, $now);
+
         $contributors = User::where('is_admin', true)
             ->withCount([
                 'madeQuestions as month_count' => fn ($q) => $q->where('created_at', '>=', $start),
@@ -47,7 +50,11 @@ class MonthlyQuota
             ])
             ->orderByDesc('month_count')
             ->get()
-            ->filter(fn (User $u) => $u->month_count > 0 || $u->total_count > 0);
+            ->filter(fn (User $u) => $u->month_count > 0 || $u->total_count > 0)
+            ->each(function (User $u) use ($streaks): void {
+                $u->current_streak = $streaks[$u->id]['current'] ?? 0;
+                $u->best_streak    = $streaks[$u->id]['best'] ?? 0;
+            });
 
         $tolerance = max(1, (int) round($target * 0.05));
         $pace = match (true) {
@@ -73,5 +80,53 @@ class MonthlyQuota
             'contributors'  => $contributors,
             'month_label'   => $now->format('F Y'),
         ];
+    }
+
+    /**
+     * Per-user streak data for the current month.
+     * @return array<int, array{current:int, best:int}>
+     */
+    private function streaks(Carbon $start, Carbon $now): array
+    {
+        $rows = Question::where('created_at', '>=', $start)
+            ->whereNotNull('maker_id')
+            ->selectRaw('maker_id, DATE(created_at) as day')
+            ->distinct()
+            ->get();
+
+        /** @var Collection<int, Collection<int, string>> $byUser */
+        $byUser = $rows->groupBy('maker_id')->map(fn ($g) => $g->pluck('day')->sort()->values());
+
+        $result = [];
+        foreach ($byUser as $userId => $days) {
+            $daysSet = array_flip($days->all());
+            $today   = $now->toDateString();
+
+            // Current streak: walk backward from today
+            $current = 0;
+            $check   = $now->copy();
+            while (isset($daysSet[$check->toDateString()])) {
+                $current++;
+                $check->subDay();
+            }
+
+            // Best streak this month: longest consecutive run in the sorted list
+            $best = 0;
+            $run  = 0;
+            $prev = null;
+            foreach ($days as $day) {
+                if ($prev !== null && Carbon::parse($day)->diffInDays(Carbon::parse($prev)) === 1) {
+                    $run++;
+                } else {
+                    $run = 1;
+                }
+                $best = max($best, $run);
+                $prev = $day;
+            }
+
+            $result[(int) $userId] = ['current' => $current, 'best' => $best];
+        }
+
+        return $result;
     }
 }

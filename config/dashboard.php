@@ -58,10 +58,27 @@ return [
         'cache_seconds' => 600,
         'top_questions' => 25,
         'chart_color' => '#a855f7',
+        // Questions asked this many times or more are flagged as retirement candidates.
+        'retirement_threshold' => (int) env('INSIGHTS_RETIREMENT_THRESHOLD', 50),
     ],
 
     // Shared hosting has no long-running queue worker: let the scheduler (cron) drain the queue.
     'queue_via_scheduler' => (bool) env('QUEUE_VIA_SCHEDULER', false),
+
+    'ingest' => [
+        // Shared secret sent by the sockets server in the X-Ingest-Secret header.
+        'secret' => env('INGEST_SECRET'),
+    ],
+
+    'analytics' => [
+        // Minimum game count before a question is eligible for threshold flagging.
+        'min_samples' => (int) env('ANALYTICS_MIN_SAMPLES', 10),
+        'thresholds' => [
+            'low_correct_rate'  => (float) env('ANALYTICS_LOW_CORRECT_RATE',  0.20),
+            'high_correct_rate' => (float) env('ANALYTICS_HIGH_CORRECT_RATE', 0.95),
+            'high_timeout_rate' => (float) env('ANALYTICS_HIGH_TIMEOUT_RATE', 0.40),
+        ],
+    ],
 
     'import' => [
         // Tables copied from the live database, in dependency order: every game table except

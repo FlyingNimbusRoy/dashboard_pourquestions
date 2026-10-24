@@ -47,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(PanelsRenderHook::HEAD_START, fn () => view('filament.fonts'))
             ->renderHook(PanelsRenderHook::FOOTER, fn () => view('filament.footer'))
             ->renderHook(PanelsRenderHook::BODY_START, fn () => view('filament.bubbles'))
+            ->renderHook(PanelsRenderHook::BODY_START, fn () => view('filament.announcement-banner'))
             ->colors([
                 'primary' => Color::hex('#a855f7'),
                 'secondary' => Color::hex('#8b5cf6'),

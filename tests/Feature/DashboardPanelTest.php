@@ -9,9 +9,11 @@ use App\Filament\Resources\Questions\Pages\CreateQuestion;
 use App\Filament\Resources\Questions\Pages\ListQuestions;
 use App\Filament\Resources\ReviewBatches\Pages\ReviewQuestions;
 use App\Models\Category;
+use App\Models\DashIssue;
 use App\Models\Question;
 use App\Models\QuestionSimilarity;
 use App\Models\User;
+use App\Services\Insights\QuestionUsage;
 use App\Services\Validation\ReviewBatchPlanner;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,9 +44,14 @@ class DashboardPanelTest extends TestCase
 
     public function test_every_page_renders_for_an_admin(): void
     {
+        QuestionUsage::forget(); // clear any stale file-cache from a previous run
         $question = Question::factory()->withAnswers('Parijs', 'Lyon')->create();
         $category = Category::factory()->create();
         $batch = app(ReviewBatchPlanner::class)->createBatch(reviewer: $this->admin);
+        $issue = DashIssue::create([
+            'type' => 'content', 'subject_type' => 'question', 'subject_id' => $question->id,
+            'reason_code' => 'test', 'reason_summary' => 'Test issue', 'status' => 'open',
+        ]);
         $this->actingAs($this->admin);
 
         foreach ([
@@ -52,6 +59,10 @@ class DashboardPanelTest extends TestCase
             '/admin/categories', "/admin/categories/{$category->id}/edit", '/admin/question-similarities',
             '/admin/review-batches', "/admin/review-batches/{$batch->id}", "/admin/review-batches/{$batch->id}/review",
             '/admin/needs-fix',
+            '/admin/issues', "/admin/issues/{$issue->id}",
+            '/admin/announcements', '/admin/minigames', '/admin/modifiers', '/admin/feature-toggles',
+            '/admin/insights-usage', '/admin/insights/question-usage',
+            '/admin/tech-health', '/admin/game-lookup', '/admin/live-view',
         ] as $url) {
             $this->get($url)->assertOk();
         }

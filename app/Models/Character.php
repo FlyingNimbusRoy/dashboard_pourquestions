@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use Database\Factories\CharacterFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Character extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<CharacterFactory> */
     use HasFactory;

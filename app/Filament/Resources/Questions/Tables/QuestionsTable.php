@@ -292,10 +292,12 @@ class QuestionsTable
                 'never_validated' => 'Every question has been validated',
                 'due' => 'Nothing is due for review',
                 'never_asked' => 'Every question has been asked at least once',
+                'retirement_candidates' => 'No retirement candidates',
                 default => 'No questions found',
             })
             ->emptyStateDescription(fn ($livewire) => match (data_get($livewire, 'activeTab')) {
                 'due' => 'Questions return here once their validation date is older than the review interval.',
+                'retirement_candidates' => 'No question has reached the ask threshold yet. Keep playing!',
                 'never_asked', 'no_category', 'no_gamepack', 'never_validated' => 'Nothing to clean up in this view right now.',
                 default => 'Adjust the search or filters, or add a new question.',
             })

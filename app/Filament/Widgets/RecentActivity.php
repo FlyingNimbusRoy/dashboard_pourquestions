@@ -9,6 +9,8 @@ use Filament\Widgets\TableWidget;
 
 class RecentActivity extends TableWidget
 {
+    protected static bool $isDiscovered = false;
+
     protected static ?int $sort = 8;
 
     protected static ?string $heading = 'Recent question changes';

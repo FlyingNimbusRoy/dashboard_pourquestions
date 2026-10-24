@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use Database\Factories\GamepackPurchaseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['gamepack_id', 'user_id', 'opened', 'access_through_admin_grant'])]
 class GamepackPurchase extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<GamepackPurchaseFactory> */
     use HasFactory;

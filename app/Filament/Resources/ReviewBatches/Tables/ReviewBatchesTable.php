@@ -82,6 +82,9 @@ class ReviewBatchesTable
                     ->visible(fn (ReviewBatch $record) => $record->completed_at === null),
                 DeleteAction::make()
                     ->modalDescription('Pending questions return to the pool; completed reviews are deleted with the batch, the questions keep their validation date.'),
-            ]);
+            ])
+            ->emptyStateHeading('No batches yet')
+            ->emptyStateDescription('Create a review batch from the Questions list to start validating questions.')
+            ->emptyStateIcon(Heroicon::OutlinedClipboardDocumentCheck);
     }
 }

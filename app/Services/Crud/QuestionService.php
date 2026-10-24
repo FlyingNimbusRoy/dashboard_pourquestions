@@ -72,11 +72,6 @@ class QuestionService extends CrudService
         $model->answers()->whereNotIn('id', $keep)->get()->each->delete();
     }
 
-    protected function beforeDelete(Model $model): void
-    {
-        $model->answers()->get()->each->delete();
-    }
-
     /** Stamps the question as reviewed-and-confirmed today. */
     public function validate(Question $question): void
     {

@@ -27,6 +27,15 @@
     <dt style="opacity: 0.7;">Denied</dt>
     <dd style="margin: 0;">{{ $openDenials ? 'Yes, waiting for a fix' : 'No' }}</dd>
 
+    <dt style="opacity: 0.7;">Open issues</dt>
+    <dd style="margin: 0;">
+        @if ($openIssues)
+            <x-filament::badge color="danger" size="sm" style="display: inline-flex;">{{ $openIssues }}</x-filament::badge>
+        @else
+            0
+        @endif
+    </dd>
+
     <dt style="opacity: 0.7;">Open duplicates</dt>
     <dd style="margin: 0;">
         @if ($openDuplicates)

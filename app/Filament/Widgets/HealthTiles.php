@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Pages\Insights\QuestionUsagePage;
+use App\Filament\Pages\InsightsUsage;
 use App\Filament\Resources\Questions\QuestionResource;
 use App\Services\Insights\BankInsights;
 use App\Services\Insights\QuestionUsage;
@@ -10,7 +10,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-/** "Today" health tiles: is the question bank in shape. */
+/** "Today" health tiles: question bank shape + usage headlines (D2 + D8). */
 class HealthTiles extends StatsOverviewWidget
 {
     protected static ?int $sort = 2;
@@ -19,7 +19,7 @@ class HealthTiles extends StatsOverviewWidget
 
     protected function getColumns(): int
     {
-        return 5;
+        return 4;
     }
 
     protected function getStats(): array
@@ -28,17 +28,18 @@ class HealthTiles extends StatsOverviewWidget
         $usage = app(QuestionUsage::class);
         $never = count($usage->neverAskedIds());
         $neverPct = $h['total'] ? round($never / $h['total'] * 100) : 0;
+        $threshold = (int) config('dashboard.insights.retirement_threshold');
+        $retiring = count($usage->retirementCandidateIds($threshold));
+
+        $top = $usage->top(1);
+        $topAsks = $top[0]['asks'] ?? 0;
+        $topId   = $top[0]['id'] ?? null;
 
         return [
             Stat::make('Validated', $h['validated_pct'].'%')
                 ->description(number_format($h['due']).' due for review')
                 ->icon(Heroicon::OutlinedShieldCheck)
                 ->url(QuestionResource::getUrl('index', ['filters' => ['validation' => ['value' => 'due']]])),
-            Stat::make('Grading due', number_format($h['grading_due']))
-                ->description('Not re-examined in over '.config('dashboard.grading.regrade_after_days').' days')
-                ->descriptionColor($h['grading_due'] > 0 ? 'warning' : 'gray')
-                ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
-                ->url(QuestionResource::getUrl('index', ['activeTab' => 'grading_due'])),
             Stat::make('No category', number_format($h['no_category']))
                 ->description('of '.number_format($h['total']).' questions')
                 ->icon(Heroicon::OutlinedTag)
@@ -47,10 +48,24 @@ class HealthTiles extends StatsOverviewWidget
                 ->description('of '.number_format($h['total']).' questions')
                 ->icon(Heroicon::OutlinedRectangleStack)
                 ->url(QuestionResource::getUrl('index', ['activeTab' => 'no_gamepack'])),
+            Stat::make('Grading due', number_format($h['grading_due']))
+                ->description('Not re-examined in over '.config('dashboard.grading.regrade_after_days').' days')
+                ->descriptionColor($h['grading_due'] > 0 ? 'warning' : 'gray')
+                ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
+                ->url(QuestionResource::getUrl('index', ['activeTab' => 'grading_due'])),
             Stat::make('Never asked', number_format($never))
                 ->description("{$neverPct}% of the bank, in no game yet")
                 ->icon(Heroicon::OutlinedEyeSlash)
                 ->url(QuestionResource::getUrl('index', ['activeTab' => 'never_asked'])),
+            Stat::make('Most asked', $topAsks > 0 ? "×{$topAsks}" : '—')
+                ->description($topId ? "Question #{$topId}" : 'No game data yet')
+                ->icon(Heroicon::OutlinedFire)
+                ->url(InsightsUsage::getUrl()),
+            Stat::make('Retire?', number_format($retiring))
+                ->description("Asked ≥ {$threshold} times — consider retiring")
+                ->descriptionColor($retiring > 0 ? 'warning' : 'gray')
+                ->icon(Heroicon::OutlinedArchiveBox)
+                ->url(QuestionResource::getUrl('index', ['activeTab' => 'retirement_candidates'])),
         ];
     }
 }

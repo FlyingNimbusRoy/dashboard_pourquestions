@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\LiveSync\RecordsLiveChanges;
 use Database\Factories\GameFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Game extends Model
 {
-    use RecordsLiveChanges;
 
     /** @use HasFactory<GameFactory> */
     use HasFactory;

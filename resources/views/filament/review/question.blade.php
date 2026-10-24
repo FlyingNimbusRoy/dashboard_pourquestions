@@ -3,7 +3,8 @@
     $percent = $total > 0 ? round($done / $total * 100) : 0;
 @endphp
 
-<div style="display: flex; flex-direction: column; gap: 1rem;"
+<div wire:key="question-{{ $question->id }}"
+     style="display: flex; flex-direction: column; gap: 1rem;"
      x-data
      x-init="
         if (! window.__reviewShortcutGuard) {

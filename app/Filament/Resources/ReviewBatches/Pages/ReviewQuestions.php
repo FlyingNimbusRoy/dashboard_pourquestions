@@ -231,10 +231,13 @@ class ReviewQuestions extends Page
 
     private function loadNext(): void
     {
-        $this->record = $this->getBatch()->fresh();
-        $review = $this->getBatch()->nextPendingReview();
+        $review = QuestionReview::query()
+            ->where('review_batch_id', $this->getBatch()->getKey())
+            ->where('outcome', ReviewOutcome::Pending->value)
+            ->orderBy('id')
+            ->first();
+
         $this->reviewId = $review?->id;
-        $this->questionCache = null;
 
         if ($review !== null) {
             $this->difficulty = (int) $review->difficulty_before;

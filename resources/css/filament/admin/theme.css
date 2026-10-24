@@ -130,3 +130,15 @@ body {
 
 /* footer tagline */
 .pq-footer { text-align: center; padding: 1.25rem 1rem; font-size: 0.75rem; color: var(--pq-muted); position: relative; z-index: 1; }
+
+/* announcement banner — fixed below the topbar, above page content */
+.pq-announcements { position: fixed; top: 4rem; left: 0; right: 0; z-index: 45; pointer-events: none; }
+.pq-announcement {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0.45rem 1.5rem;
+    font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.01em;
+    pointer-events: auto;
+}
+.pq-announcement--info        { background: rgba(168, 85, 247, 0.90); color: #fff; }
+.pq-announcement--warning     { background: rgba(245, 158, 11, 0.92); color: #1c1408; }
+.pq-announcement--maintenance { background: rgba(220, 38, 38, 0.92); color: #fff; }
