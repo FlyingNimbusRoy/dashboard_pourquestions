@@ -25,7 +25,7 @@ class CompareQuestions extends Page
 {
     protected static string $resource = QuestionSimilarityResource::class;
 
-    protected static string $view = 'filament.question-similarities.compare';
+    protected string $view = 'filament.question-similarities.compare';
 
     protected static bool $shouldRegisterNavigation = false;
 

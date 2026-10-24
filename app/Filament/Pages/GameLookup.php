@@ -20,7 +20,7 @@ use UnitEnum;
  */
 class GameLookup extends Page
 {
-    protected static string $view = 'filament.pages.game-lookup';
+    protected string $view = 'filament.pages.game-lookup';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlass;
 

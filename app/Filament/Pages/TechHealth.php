@@ -12,7 +12,7 @@ use UnitEnum;
 
 class TechHealth extends Page
 {
-    protected static string $view = 'filament.pages.tech-health';
+    protected string $view = 'filament.pages.tech-health';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedComputerDesktop;
 

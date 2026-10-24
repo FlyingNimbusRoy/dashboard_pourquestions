@@ -9,7 +9,7 @@ use UnitEnum;
 
 class LiveView extends Page
 {
-    protected static string $view = 'filament.pages.live-view';
+    protected string $view = 'filament.pages.live-view';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSignal;
 

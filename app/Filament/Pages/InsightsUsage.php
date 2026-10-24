@@ -12,7 +12,7 @@ use UnitEnum;
 
 class InsightsUsage extends Page
 {
-    protected static string $view = 'filament.pages.insights-usage';
+    protected string $view = 'filament.pages.insights-usage';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
