@@ -19,3 +19,6 @@ if (config('dashboard.queue_via_scheduler')) {
 // Analytics pipeline: rollup first, then threshold check (depends on session data being fresh).
 Schedule::command('analytics:rollup-daily')->dailyAt('02:00')->withoutOverlapping();
 Schedule::command('analytics:check-thresholds')->dailyAt('02:30')->withoutOverlapping();
+
+// Close games that have been open/running past the inactivity threshold (config: games.stale_after_hours).
+Schedule::command('games:close-stale')->hourly()->withoutOverlapping();

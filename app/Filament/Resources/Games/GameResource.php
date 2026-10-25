@@ -8,9 +8,13 @@ use App\Filament\Resources\Questions\QuestionResource;
 use App\Models\Game;
 use App\Services\Crud\GameService;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -23,6 +27,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use UnitEnum;
 
 class GameResource extends Resource
@@ -106,6 +111,54 @@ class GameResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('cancel')
+                    ->label('Cancel')
+                    ->icon(Heroicon::OutlinedXCircle)
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalDescription('Mark this game as cancelled. This cannot be undone.')
+                    ->visible(fn (Game $record) => ! $record->is_cancelled && ! $record->is_finished)
+                    ->action(function (Game $record) {
+                        app(GameService::class)->markCancelled([$record], auth()->id());
+                        Notification::make()->success()->title('Game cancelled.')->send();
+                    }),
+                Action::make('finish')
+                    ->label('Finish')
+                    ->icon(Heroicon::OutlinedCheckCircle)
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalDescription('Mark this game as finished. This cannot be undone.')
+                    ->visible(fn (Game $record) => ! $record->is_finished && ! $record->is_cancelled)
+                    ->action(function (Game $record) {
+                        app(GameService::class)->markFinished([$record], auth()->id());
+                        Notification::make()->success()->title('Game marked as finished.')->send();
+                    }),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('cancel')
+                        ->label('Cancel selected')
+                        ->icon(Heroicon::OutlinedXCircle)
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalDescription('Cancel all selected games. This cannot be undone.')
+                        ->action(function (Collection $records) {
+                            $n = app(GameService::class)->markCancelled($records, auth()->id());
+                            Notification::make()->success()->title("{$n} game(s) cancelled.")->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                    BulkAction::make('finish')
+                        ->label('Mark selected as finished')
+                        ->icon(Heroicon::OutlinedCheckCircle)
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalDescription('Mark all selected games as finished. This cannot be undone.')
+                        ->action(function (Collection $records) {
+                            $n = app(GameService::class)->markFinished($records, auth()->id());
+                            Notification::make()->success()->title("{$n} game(s) marked as finished.")->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                ]),
             ]);
     }
 
