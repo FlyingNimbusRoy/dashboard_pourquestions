@@ -1,7 +1,5 @@
 <x-filament-panels::page>
-    <div wire:poll.30000ms>
-        @php $snap = \App\Models\DashLiveSnapshot::orderByDesc('id')->first(); @endphp
-
+    <div wire:poll.15000ms="refresh">
         @if ($snap)
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
                 <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5">

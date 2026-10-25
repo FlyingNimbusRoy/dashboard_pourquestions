@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\DashLiveSnapshot;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -20,4 +21,16 @@ class LiveView extends Page
     protected static ?string $navigationLabel = 'Live view';
 
     protected static ?string $title = 'Live view';
+
+    public ?DashLiveSnapshot $snap = null;
+
+    public function mount(): void
+    {
+        $this->snap = DashLiveSnapshot::orderByDesc('id')->first();
+    }
+
+    public function refresh(): void
+    {
+        $this->snap = DashLiveSnapshot::orderByDesc('id')->first();
+    }
 }
