@@ -17,6 +17,7 @@ use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\File;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -55,7 +56,20 @@ class CharacterResource extends Resource
                 ->columnSpanFull()
                 ->schema([
                     TextInput::make('name')->required()->maxLength(255),
-                    TextInput::make('url')->label('URL / slug')->required()->maxLength(255),
+                    Select::make('url')
+                        ->label('Character image')
+                        ->options(function () {
+                            $dir = public_path('img/characters');
+                            if (! File::isDirectory($dir)) {
+                                return [];
+                            }
+
+                            return collect(File::files($dir))
+                                ->mapWithKeys(fn ($f) => [$f->getFilename() => $f->getFilename()])
+                                ->all();
+                        })
+                        ->searchable()
+                        ->required(),
                     Select::make('gamepack_id')
                         ->label('Gamepack')
                         ->relationship('gamepack', 'name')
