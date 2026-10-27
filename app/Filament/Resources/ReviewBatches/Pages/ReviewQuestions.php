@@ -70,6 +70,19 @@ class ReviewQuestions extends Page
             : sprintf('%d / %d', min($done + 1, $total), $total);
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('deniedBin')
+                ->label('Denied bin')
+                ->icon(Heroicon::OutlinedArchiveBoxXMark)
+                ->color('gray')
+                ->badge(fn () => ($n = Review::deniedOpenCount()) > 0 ? $n : null)
+                ->badgeColor('danger')
+                ->url(Review::getUrl(['tab' => 'denied'])),
+        ];
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema->components($this->reviewId === null ? $this->summaryComponents() : $this->questionComponents());
@@ -150,6 +163,7 @@ class ReviewQuestions extends Page
                     ->label('Note (optional)')
                     ->rows(2),
             ])
+            // The Radio has enum options, so Filament already hands us a DenyReason.
             ->action(fn (array $data) => $this->deny($data['reason'], $data['note'] ?? null));
     }
 
