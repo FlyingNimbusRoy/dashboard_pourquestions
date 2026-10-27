@@ -150,7 +150,7 @@ class ReviewQuestions extends Page
                     ->label('Note (optional)')
                     ->rows(2),
             ])
-            ->action(fn (array $data) => $this->deny(DenyReason::from($data['reason']), $data['note'] ?? null));
+            ->action(fn (array $data) => $this->deny($data['reason'], $data['note'] ?? null));
     }
 
     /** @return list<\Filament\Schemas\Components\Component> */
