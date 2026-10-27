@@ -70,19 +70,6 @@ class ReviewQuestions extends Page
             : sprintf('%d / %d', min($done + 1, $total), $total);
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('deniedBin')
-                ->label('Denied bin')
-                ->icon(Heroicon::OutlinedArchiveBoxXMark)
-                ->color('gray')
-                ->badge(fn () => ($n = Review::deniedOpenCount()) > 0 ? $n : null)
-                ->badgeColor('danger')
-                ->url(Review::getUrl(['tab' => 'denied'])),
-        ];
-    }
-
     public function content(Schema $schema): Schema
     {
         return $schema->components($this->reviewId === null ? $this->summaryComponents() : $this->questionComponents());
@@ -163,7 +150,6 @@ class ReviewQuestions extends Page
                     ->label('Note (optional)')
                     ->rows(2),
             ])
-            // The Radio has enum options, so Filament already hands us a DenyReason.
             ->action(fn (array $data) => $this->deny($data['reason'], $data['note'] ?? null));
     }
 
@@ -252,6 +238,11 @@ class ReviewQuestions extends Page
             ->first();
 
         $this->reviewId = $review?->id;
+
+        // The page content (and the question in it) was already built earlier in this request,
+        // when Livewire looked up the clicked action. Drop both so the next question renders.
+        $this->questionCache = null;
+        unset($this->cachedSchemas['content']);
 
         if ($review !== null) {
             $this->difficulty = (int) $review->difficulty_before;
