@@ -1,308 +1,234 @@
 <?php
 
-namespace App\Filament\Resources\ReviewBatches\Pages;
+namespace App\Filament\Pages;
 
-use App\Enums\DenyReason;
 use App\Enums\ReviewOutcome;
-use App\Enums\SimilarityStatus;
-use App\Filament\Pages\Review;
-use App\Filament\Resources\QuestionSimilarities\QuestionSimilarityResource;
-use App\Filament\Resources\Questions\QuestionResource;
+use App\Filament\Resources\NeedsFix\Tables\DeniedTable;
 use App\Filament\Resources\ReviewBatches\ReviewBatchResource;
-use App\Models\Question;
+use App\Filament\Resources\ReviewBatches\Tables\ReviewBatchesTable;
+use App\Filament\Resources\ReviewBatches\Widgets\ReviewThroughput;
+use App\Models\Category;
 use App\Models\QuestionReview;
-use App\Models\QuestionSimilarity;
 use App\Models\ReviewBatch;
+use App\Models\User;
 use App\Services\Validation\ReviewBatchPlanner;
-use App\Services\Validation\ReviewService;
+use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use Filament\Resources\Pages\Page;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Callout;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\View;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
+use UnitEnum;
 
-/**
- * Works through a review batch one question at a time: Approve or Deny (with a reason), then the
- * next question appears without a page load. Keyboard: A approve, D deny, S skip, 1-5 difficulty.
- * When nothing is pending any more the page shows the batch summary.
- */
-class ReviewQuestions extends Page
+use function Filament\Support\original_request;
+
+/** The work queue for validation: my batches, the denied bin and all batches in one place. */
+class Review extends Page implements HasTable
 {
-    use InteractsWithRecord;
+    use InteractsWithTable;
 
-    protected static string $resource = ReviewBatchResource::class;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
-    #[Locked]
-    public ?int $reviewId = null;
+    protected static string|UnitEnum|null $navigationGroup = 'Work queue';
 
-    /** The difficulty (1-5) the reviewer has chosen for the current question. */
-    public int $difficulty = 3;
+    protected static ?int $navigationSort = 1;
 
-    public function mount(int|string $record): void
+    protected static ?string $slug = 'review';
+
+    protected static ?string $title = 'Review';
+
+    #[Url(as: 'tab')]
+    public string $activeTab = 'mine';
+
+    public static function getNavigationBadge(): ?string
     {
-        $this->record = $this->resolveRecord($record);
-        $this->loadNext();
+        $count = Cache::remember('nav-badge.review.'.auth()->id(), 60, fn () => self::deniedOpenCount() + self::myPendingCount());
+
+        return $count > 0 ? (string) $count : null;
     }
 
-    public function getTitle(): string|Htmlable
+    public static function getNavigationBadgeColor(): string
     {
-        return $this->getBatch()->name;
+        return 'danger';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Denied questions waiting for a fix plus your own pending review items';
+    }
+
+    /** Adds a "Denied bin" entry under Review in the sidebar, straight to the Denied tab. */
+    public static function getNavigationItems(): array
+    {
+        $route = static::getNavigationItemActiveRoutePattern();
+        $onPage = fn (): bool => original_request()->routeIs($route);
+        $onDeniedTab = fn (): bool => $onPage() && original_request()->query('tab') === 'denied';
+
+        $items = array_map(
+            fn (NavigationItem $item) => $item->isActiveWhen(fn (): bool => $onPage() && ! $onDeniedTab()),
+            parent::getNavigationItems(),
+        );
+
+        $items[] = NavigationItem::make('Denied bin')
+            ->group(static::getNavigationGroup())
+            ->parentItem(static::getNavigationLabel())
+            ->icon(Heroicon::OutlinedArchiveBoxXMark)
+            ->sort(static::getNavigationSort())
+            ->url(static::getUrl(['tab' => 'denied']))
+            ->isActiveWhen($onDeniedTab)
+            ->badge(function (): ?string {
+                $count = Cache::remember('nav-badge.denied-open', 60, fn () => self::deniedOpenCount());
+
+                return $count > 0 ? (string) $count : null;
+            }, color: 'danger');
+
+        return $items;
+    }
+
+    public static function deniedOpenCount(): int
+    {
+        return QuestionReview::where('outcome', ReviewOutcome::NeedsFix)->whereNull('resolved_at')->count();
+    }
+
+    public static function myPendingCount(): int
+    {
+        return QuestionReview::where('outcome', ReviewOutcome::Pending)
+            ->whereHas('batch', fn (Builder $q) => $q->open()->where('reviewer_id', auth()->id()))
+            ->count();
+    }
+
+    public function updatedActiveTab(): void
+    {
+        if (! in_array($this->activeTab, ['mine', 'denied', 'all'], true)) {
+            $this->activeTab = 'mine';
+        }
+
+        $this->tableSort = null;
+        $this->tableSearch = '';
+        $this->tableFilters = null;
+        $this->deselectAllTableRecords();
+
+        // The table is built once per request, before this hook runs, so it was still configured
+        // for the previous tab. Rebuild it: Denied is a different model with different columns.
+        $this->resetTable();
     }
 
     public function getSubheading(): ?string
     {
-        [$done, $total] = $this->progress();
-
-        return $this->reviewId === null
-            ? "Batch finished · {$total} questions"
-            : sprintf('%d / %d', min($done + 1, $total), $total);
+        return 'Small batches, one question at a time. Denied questions wait in the Denied tab until they are fixed.';
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('deniedBin')
-                ->label('Denied bin')
-                ->icon(Heroicon::OutlinedArchiveBoxXMark)
+            $this->startAction(),
+            Action::make('custom')
+                ->label('Custom batch')
+                ->icon(Heroicon::OutlinedPlus)
                 ->color('gray')
-                ->badge(fn () => ($n = Review::deniedOpenCount()) > 0 ? $n : null)
-                ->badgeColor('danger')
-                ->url(Review::getUrl(['tab' => 'denied'])),
+                ->modalDescription('Takes the questions that have gone longest without review. Questions already waiting in a batch or denied are skipped.')
+                ->schema([
+                    TextInput::make('size')
+                        ->numeric()->minValue(1)->maxValue(200)
+                        ->default(fn () => config('dashboard.validation.batch_size'))
+                        ->required(),
+                    Select::make('category_id')
+                        ->label('Only category')
+                        ->options(fn () => Category::orderBy('name')->pluck('name', 'id'))
+                        ->placeholder('All categories')
+                        ->searchable(),
+                    Select::make('reviewer_id')
+                        ->label('Reviewer')
+                        ->options(fn () => User::reviewers()->orderBy('name')->pluck('name', 'id'))
+                        ->default(fn () => auth()->id())
+                        ->placeholder('Reviewer with the fewest open batches'),
+                ])
+                ->action(function (array $data, ReviewBatchPlanner $planner) {
+                    $batch = $planner->createBatch(
+                        reviewer: filled($data['reviewer_id']) ? User::find($data['reviewer_id']) : null,
+                        size: (int) $data['size'],
+                        categoryId: filled($data['category_id']) ? (int) $data['category_id'] : null,
+                    );
+
+                    $batch === null
+                        ? Notification::make()->info()->title('No questions are due for review.')->send()
+                        : $this->redirect(ReviewBatchResource::getUrl('review', ['record' => $batch]));
+                }),
         ];
+    }
+
+    private function startAction(): Action
+    {
+        return Action::make('start')
+            ->label('Start a batch')
+            ->icon(Heroicon::OutlinedPlay)
+            ->action(function (ReviewBatchPlanner $planner) {
+                $batch = $planner->startBatch(auth()->user());
+
+                if ($batch === null) {
+                    Notification::make()->info()->title('No questions are due for review.')->send();
+
+                    return;
+                }
+
+                $this->redirect(ReviewBatchResource::getUrl('review', ['record' => $batch]));
+            });
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [ReviewThroughput::class];
     }
 
     public function content(Schema $schema): Schema
     {
-        return $schema->components($this->reviewId === null ? $this->summaryComponents() : $this->questionComponents());
-    }
+        $denied = self::deniedOpenCount();
 
-    /** @return list<\Filament\Schemas\Components\Component> */
-    private function questionComponents(): array
-    {
-        $question = $this->getQuestion();
-
-        return [
-            $this->similarityCallout($question),
-            Section::make()
-                ->schema([
-                    View::make('filament.review.question')->viewData([
-                        'question' => $question,
-                        'done' => $this->progress()[0],
-                        'total' => $this->progress()[1],
-                    ]),
-                ])
-                ->footer([
-                    Actions::make([
-                        Action::make('approve')
-                            ->label('Approve')
-                            ->icon(Heroicon::OutlinedCheck)
-                            ->color('success')
-                            ->size('xl')
-                            ->keyBindings(['a'])
-                            ->action(fn () => $this->approve()),
-                        $this->denyAction(),
-                        Action::make('skip')
-                            ->label('Skip')
-                            ->color('gray')
-                            ->keyBindings(['s'])
-                            ->action(fn () => $this->skip()),
-                        Action::make('edit')
-                            ->label('Edit question')
-                            ->icon(Heroicon::OutlinedPencilSquare)
-                            ->color('gray')
-                            ->outlined()
-                            ->url(QuestionResource::getUrl('edit', ['record' => $question->id]), shouldOpenInNewTab: true),
-                    ])->key("reviewActions"),
+        return $schema->components([
+            ...$this->getWidgetsSchemaComponents($this->getHeaderWidgets()),
+            Tabs::make('reviewTabs')
+                ->livewireProperty('activeTab')
+                ->tabPanels(false)
+                ->contained(false)
+                // With livewireProperty(), Filament writes each tab's ARRAY KEY into $activeTab,
+                // so the keys must be the strings table() checks for.
+                ->tabs([
+                    'mine' => Tab::make('My batches'),
+                    'denied' => Tab::make('Denied')->badge($denied > 0 ? $denied : null)->badgeColor('danger'),
+                    'all' => Tab::make('All batches'),
                 ]),
-            Section::make('Difficulty')
-                ->description('1 = almost everyone knows this, 5 = only experts. Applied when you approve.')
-                ->compact()
-                ->schema([
-                    Actions::make(array_map(
-                        fn (int $level) => Action::make("difficulty{$level}")
-                            ->label((string) $level)
-                            ->color(fn () => $this->difficulty === $level ? 'primary' : 'gray')
-                            ->outlined(fn () => $this->difficulty !== $level)
-                            ->keyBindings([(string) $level])
-                            ->action(fn () => $this->difficulty = $level),
-                        range(config('dashboard.difficulty.min'), config('dashboard.difficulty.max')),
-                    )),
-                ]),
-        ];
+            EmbeddedTable::make(),
+        ]);
     }
 
-    private function denyAction(): Action
+    public function table(Table $table): Table
     {
-        return Action::make('deny')
-            ->label('Deny')
-            ->icon(Heroicon::OutlinedXMark)
-            ->color('danger')
-            ->size('xl')
-            ->keyBindings(['d'])
-            ->modalHeading('Deny this question')
-            ->modalDescription('It goes to the denied bin, where it can be fixed and re-validated.')
-            ->modalWidth(Width::Small)
-            ->modalSubmitActionLabel('Deny')
-            ->schema([
-                Radio::make('reason')
-                    ->options(DenyReason::class)
-                    ->required(),
-                Textarea::make('note')
-                    ->label('Note (optional)')
-                    ->rows(2),
-            ])
-            // The Radio has enum options, so Filament already hands us a DenyReason.
-            ->action(fn (array $data) => $this->deny($data['reason'], $data['note'] ?? null));
-    }
-
-    /** @return list<\Filament\Schemas\Components\Component> */
-    private function summaryComponents(): array
-    {
-        $counts = $this->getBatch()->reviews()->selectRaw('outcome, count(*) as total')->groupBy('outcome')->pluck('total', 'outcome');
-        $count = fn (ReviewOutcome $outcome) => (int) ($counts[$outcome->value] ?? 0);
-
-        return [
-            Section::make('Batch finished')
-                ->description(sprintf(
-                    '%d approved, %d denied, %d skipped.',
-                    $count(ReviewOutcome::Approved),
-                    $count(ReviewOutcome::NeedsFix),
-                    $count(ReviewOutcome::Skipped),
-                ))
-                ->footer([
-                    Actions::make([
-                        Action::make('next')
-                            ->label('Start next batch')
-                            ->icon(Heroicon::OutlinedPlay)
-                            ->action(function (ReviewBatchPlanner $planner) {
-                                $batch = $planner->startBatch(auth()->user());
-
-                                if ($batch === null) {
-                                    Notification::make()->info()->title('No more questions are due for review.')->send();
-
-                                    return;
-                                }
-
-                                $this->redirect(ReviewBatchResource::getUrl('review', ['record' => $batch]));
-                            }),
-                        Action::make('denied')
-                            ->label('Open the denied bin')
-                            ->color('gray')
-                            ->url(Review::getUrl(['tab' => 'denied'])),
-                        Action::make('back')
-                            ->label('Back to Review')
-                            ->color('gray')
-                            ->url(Review::getUrl()),
-                    ]),
-                ]),
-        ];
-    }
-
-    protected function approve(): void
-    {
-        app(ReviewService::class)->approve($this->getReview(), auth()->user(), $this->difficulty);
-        $this->advance('Approved.');
-    }
-
-    protected function deny(DenyReason $reason, ?string $note): void
-    {
-        try {
-            app(ReviewService::class)->deny($this->getReview(), auth()->user(), $reason, $note, $this->difficulty);
-        } catch (ValidationException $e) {
-            Notification::make()->danger()->title('Not saved')->body(collect($e->errors())->flatten()->first())->send();
-
-            return;
+        if ($this->activeTab === 'denied') {
+            return DeniedTable::configure($table);
         }
 
-        $this->advance('Denied: '.$reason->getLabel().'.');
-    }
+        $table = ReviewBatchesTable::configure($table)
+            ->query(ReviewBatchResource::getEloquentQuery())
+            ->recordUrl(fn (ReviewBatch $record) => ReviewBatchResource::getUrl('view', ['record' => $record]))
+            ->emptyStateHeading($this->activeTab === 'mine' ? 'No batches assigned to you' : 'No batches yet')
+            ->emptyStateDescription('Start a batch to get the questions that have gone longest without review.')
+            ->emptyStateIcon(Heroicon::OutlinedClipboardDocumentCheck)
+            ->emptyStateActions([$this->startAction()]);
 
-    protected function skip(): void
-    {
-        app(ReviewService::class)->skip($this->getReview(), auth()->user());
-        $this->advance('Skipped.');
-    }
-
-    private function advance(string $message): void
-    {
-        Notification::make()->success()->title($message)->duration(1500)->send();
-        Cache::forget('nav-badge.review.'.auth()->id());
-        Cache::forget('nav-badge.denied-open');
-        $this->loadNext();
-    }
-
-    private function loadNext(): void
-    {
-        $review = QuestionReview::query()
-            ->where('review_batch_id', $this->getBatch()->getKey())
-            ->where('outcome', ReviewOutcome::Pending->value)
-            ->orderBy('id')
-            ->first();
-
-        $this->reviewId = $review?->id;
-
-        if ($review !== null) {
-            $this->difficulty = (int) $review->difficulty_before;
-        }
-    }
-
-    /** @return array{0: int, 1: int} */
-    private function progress(): array
-    {
-        $batch = $this->getBatch();
-
-        return [
-            $batch->reviews()->where('outcome', '!=', ReviewOutcome::Pending)->count(),
-            $batch->reviews()->count(),
-        ];
-    }
-
-    private function similarityCallout(Question $question): Callout
-    {
-        $open = QuestionSimilarity::query()
-            ->where('status', SimilarityStatus::Open)
-            ->where(fn ($q) => $q->where('question_id', $question->id)->orWhere('similar_question_id', $question->id))
-            ->count();
-
-        return Callout::make($open === 1 ? '1 open duplicate suspect' : "{$open} open duplicate suspects")
-            ->description('This question may have a duplicate. Check it under "Duplicates".')
-            ->warning()
-            ->actions([
-                Action::make('similar')
-                    ->label('Show')
-                    ->url(QuestionSimilarityResource::getUrl('index', ['tableSearch' => (string) $question->id]))
-                    ->openUrlInNewTab(),
-            ])
-            ->visible($open > 0);
-    }
-
-    private function getBatch(): ReviewBatch
-    {
-        /** @var ReviewBatch */
-        return $this->getRecord();
-    }
-
-    private function getReview(): QuestionReview
-    {
-        return QuestionReview::where('review_batch_id', $this->getBatch()->id)->findOrFail($this->reviewId);
-    }
-
-    private ?Question $questionCache = null;
-
-    private function getQuestion(): Question
-    {
-        return $this->questionCache ??= $this->getReview()->question()->with(['answers', 'category', 'gamepack'])->firstOrFail();
+        return $this->activeTab === 'mine'
+            ? $table->modifyQueryUsing(fn (Builder $query) => $query->where('reviewer_id', auth()->id()))
+            : $table;
     }
 }
