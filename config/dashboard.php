@@ -38,10 +38,6 @@ return [
         'monthly_target' => (int) env('QUOTA_MONTHLY_TARGET', 50),
     ],
 
-    'grading' => [
-        'regrade_after_days' => (int) env('GRADING_REGRADE_AFTER_DAYS', 30),
-    ],
-
     'games' => [
         // A game not finished/cancelled and older than this many hours counts as stale.
         'stale_after_hours' => (int) env('GAMES_STALE_AFTER_HOURS', 6),

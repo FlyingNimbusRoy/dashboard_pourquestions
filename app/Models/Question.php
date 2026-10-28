@@ -86,12 +86,6 @@ class Question extends Model
         return $query->where('last_validated', '<', now()->subDays((int) config('dashboard.validation.revalidate_after_days')));
     }
 
-    /** Questions not updated (any field, including difficulty) within the grading window. */
-    public function scopeGradingDue(Builder $query): Builder
-    {
-        return $query->where('updated_at', '<', now()->subDays((int) config('dashboard.grading.regrade_after_days')));
-    }
-
     public function wasEverValidated(): bool
     {
         return $this->last_validated !== null && $this->last_validated->gt(self::NEVER_VALIDATED);

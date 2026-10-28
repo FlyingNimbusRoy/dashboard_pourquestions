@@ -176,9 +176,6 @@ class ListQuestions extends ListRecords
             'never_asked' => Tab::make('Never asked')
                 ->badge(count($neverAsked()))
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('questions.id', $neverAsked())),
-            'grading_due' => Tab::make('Grading due')
-                ->badge($count(fn (Builder $q) => $q->gradingDue()))
-                ->modifyQueryUsing(fn (Builder $query) => $query->gradingDue()->reorder()->orderBy('updated_at', 'asc')),
             'retirement_candidates' => Tab::make('Retire?')
                 ->badge(count($retirementIds()))
                 ->badgeColor('warning')

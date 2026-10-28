@@ -74,7 +74,7 @@ class IssueResource extends Resource
                     ->sortable(),
             ])
             ->emptyStateHeading('No issues')
-            ->emptyStateDescription('Issues are raised automatically by threshold checks or manually from the question edit page.')
+            ->emptyStateDescription('Issues are raised automatically by threshold checks, or manually with "New issue".')
             ->filters([
                 SelectFilter::make('type')
                     ->options([

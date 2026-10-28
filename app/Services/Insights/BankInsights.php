@@ -11,7 +11,7 @@ class BankInsights
 {
     private const TTL = 300;
 
-    /** @return array{total:int, due:int, validated_pct:float, no_category:int, no_gamepack:int, grading_due:int} */
+    /** @return array{total:int, due:int, validated_pct:float, no_category:int, no_gamepack:int} */
     public function health(): array
     {
         return Cache::store('file')->remember('insights.bank.health.v2', self::TTL, function (): array {
@@ -21,8 +21,7 @@ class BankInsights
             return ['total' => $total, 'due' => $due,
                 'validated_pct' => $total ? round(($total - $due) / $total * 100, 1) : 0.0,
                 'no_category' => Question::whereNull('category_id')->count(),
-                'no_gamepack' => Question::whereNull('gamepack_id')->count(),
-                'grading_due' => Question::gradingDue()->count()];
+                'no_gamepack' => Question::whereNull('gamepack_id')->count()];
         });
     }
 

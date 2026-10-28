@@ -48,11 +48,6 @@ class HealthTiles extends StatsOverviewWidget
                 ->description('of '.number_format($h['total']).' questions')
                 ->icon(Heroicon::OutlinedRectangleStack)
                 ->url(QuestionResource::getUrl('index', ['activeTab' => 'no_gamepack'])),
-            Stat::make('Grading due', number_format($h['grading_due']))
-                ->description('Not re-examined in over '.config('dashboard.grading.regrade_after_days').' days')
-                ->descriptionColor($h['grading_due'] > 0 ? 'warning' : 'gray')
-                ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
-                ->url(QuestionResource::getUrl('index', ['activeTab' => 'grading_due'])),
             Stat::make('Never asked', number_format($never))
                 ->description("{$neverPct}% of the bank, in no game yet")
                 ->icon(Heroicon::OutlinedEyeSlash)

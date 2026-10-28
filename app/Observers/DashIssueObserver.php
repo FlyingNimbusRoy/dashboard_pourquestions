@@ -8,9 +8,23 @@ use App\Notifications\DashIssueAssigned;
 
 class DashIssueObserver
 {
+    public function created(DashIssue $issue): void
+    {
+        $this->notifyAssignee($issue);
+    }
+
     public function updated(DashIssue $issue): void
     {
-        if (! $issue->wasChanged('assignee_id') || $issue->assignee_id === null) {
+        if (! $issue->wasChanged('assignee_id')) {
+            return;
+        }
+
+        $this->notifyAssignee($issue);
+    }
+
+    private function notifyAssignee(DashIssue $issue): void
+    {
+        if ($issue->assignee_id === null) {
             return;
         }
 
