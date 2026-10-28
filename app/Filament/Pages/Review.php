@@ -16,7 +16,6 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
@@ -31,8 +30,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Url;
 use UnitEnum;
-
-use function Filament\Support\original_request;
 
 /** The work queue for validation: my batches, the denied bin and all batches in one place. */
 class Review extends Page implements HasTable
@@ -69,34 +66,6 @@ class Review extends Page implements HasTable
         return 'Denied questions waiting for a fix plus your own pending review items';
     }
 
-    /** Adds a "Denied bin" entry under Review in the sidebar, straight to the Denied tab. */
-    public static function getNavigationItems(): array
-    {
-        $route = static::getNavigationItemActiveRoutePattern();
-        $onPage = fn (): bool => original_request()->routeIs($route);
-        $onDeniedTab = fn (): bool => $onPage() && original_request()->query('tab') === 'denied';
-
-        $items = array_map(
-            fn (NavigationItem $item) => $item->isActiveWhen(fn (): bool => $onPage() && ! $onDeniedTab()),
-            parent::getNavigationItems(),
-        );
-
-        $items[] = NavigationItem::make('Denied bin')
-            ->group(static::getNavigationGroup())
-            ->parentItem(static::getNavigationLabel())
-            ->icon(Heroicon::OutlinedArchiveBoxXMark)
-            ->sort(static::getNavigationSort())
-            ->url(static::getUrl(['tab' => 'denied']))
-            ->isActiveWhen($onDeniedTab)
-            ->badge(function (): ?string {
-                $count = Cache::remember('nav-badge.denied-open', 60, fn () => self::deniedOpenCount());
-
-                return $count > 0 ? (string) $count : null;
-            }, color: 'danger');
-
-        return $items;
-    }
-
     public static function deniedOpenCount(): int
     {
         return QuestionReview::where('outcome', ReviewOutcome::NeedsFix)->whereNull('resolved_at')->count();
@@ -111,17 +80,10 @@ class Review extends Page implements HasTable
 
     public function updatedActiveTab(): void
     {
-        if (! in_array($this->activeTab, ['mine', 'denied', 'all'], true)) {
-            $this->activeTab = 'mine';
-        }
-
         $this->tableSort = null;
         $this->tableSearch = '';
         $this->tableFilters = null;
         $this->deselectAllTableRecords();
-
-        // The table is built once per request, before this hook runs, so it was still configured
-        // for the previous tab. Rebuild it: Denied is a different model with different columns.
         $this->resetTable();
     }
 
@@ -197,13 +159,10 @@ class Review extends Page implements HasTable
         $denied = self::deniedOpenCount();
 
         return $schema->components([
-            ...$this->getWidgetsSchemaComponents($this->getHeaderWidgets()),
             Tabs::make('reviewTabs')
                 ->livewireProperty('activeTab')
                 ->tabPanels(false)
                 ->contained(false)
-                // With livewireProperty(), Filament writes each tab's ARRAY KEY into $activeTab,
-                // so the keys must be the strings table() checks for.
                 ->tabs([
                     'mine' => Tab::make('My batches'),
                     'denied' => Tab::make('Denied')->badge($denied > 0 ? $denied : null)->badgeColor('danger'),
