@@ -26,12 +26,14 @@ body {
 }
 
 /* a few faint lilac bubbles rising in the background, a nod to the game (markup: views/filament/bubbles.blade.php) */
+/* z-index -1 keeps them behind everything without giving the layout its own stacking context:
+   that would trap modals under the topbar and sidebar. */
 .pq-bubbles {
     position: fixed;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 .pq-bubble {
     position: absolute;
@@ -53,7 +55,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
     .pq-bubbles { display: none; }
 }
-.fi-layout, .fi-main-ctn, .fi-simple-layout { position: relative; z-index: 1; }
 
 /* page titles in the game's display face */
 .fi-header-heading,

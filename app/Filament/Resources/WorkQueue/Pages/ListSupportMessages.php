@@ -22,7 +22,8 @@ class ListSupportMessages extends ListRecords
                 ->label('New support message')
                 ->icon(Heroicon::OutlinedPlus)
                 ->modalHeading('Log a support message')
-                ->form([
+                ->modalWidth(Width::Large)
+                ->schema([
                     Select::make('type')
                         ->options([
                             'feedback' => 'Feedback',
@@ -34,7 +35,7 @@ class ListSupportMessages extends ListRecords
                     Textarea::make('message')
                         ->required()
                         ->minLength(3)
-                        ->rows(5),
+                        ->rows(4),
                     // Players share the users table, so search instead of preloading everyone.
                     Select::make('user_id')
                         ->label('Player')

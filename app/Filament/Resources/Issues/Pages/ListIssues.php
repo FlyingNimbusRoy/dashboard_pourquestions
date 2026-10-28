@@ -24,7 +24,8 @@ class ListIssues extends ListRecords
                 ->label('New issue')
                 ->icon(Heroicon::OutlinedPlus)
                 ->modalHeading('Report an issue')
-                ->form([
+                ->modalWidth(Width::Large)
+                ->schema([
                     Select::make('type')
                         ->options([
                             'content' => 'Content',
@@ -55,7 +56,7 @@ class ListIssues extends ListRecords
                         ->label('What is wrong?')
                         ->required()
                         ->minLength(3)
-                        ->rows(4),
+                        ->rows(3),
                     Select::make('assignee_id')
                         ->label('Assign to')
                         ->options(fn () => User::where('is_admin', true)->pluck('name', 'id'))
